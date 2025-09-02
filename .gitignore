@@ -416,3 +416,11 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+
+# VS 项目本地用户配置（不要提交）
+*.vcxproj.user
+
+# VS 项目视图过滤器（不要提交）
+*.vcxproj.filters
+

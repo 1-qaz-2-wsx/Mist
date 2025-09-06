@@ -136,6 +136,8 @@
     <ClCompile Include="ItemDatabase.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Mist.cpp" />
+    <ClCompile Include="NPC.cpp" />
+    <ClCompile Include="NPCDatabase.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="RoomDatebase.cpp" />
@@ -150,6 +152,8 @@
     <ClInclude Include="ItemDatabase.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="NPC.h" />
+    <ClInclude Include="NPCDatabase.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="RoomDatebase.h" />

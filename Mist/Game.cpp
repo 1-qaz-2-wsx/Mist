@@ -1,11 +1,11 @@
-// Game.cpp
+ï»¿// Game.cpp
 
 #include "Game.h"
 
 // ----------------------------------------------------------------
-// °üº¬ËùÓĞ¡°Í¬ÊÂÀà¡±ºÍ¹¤¾ßÀàµÄÍ·ÎÄ¼ş
+// åŒ…å«æ‰€æœ‰â€œåŒäº‹ç±»â€å’Œå·¥å…·ç±»çš„å¤´æ–‡ä»¶
 // ----------------------------------------------------------------
-// ÔÚ.cppÎÄ¼şÖĞ£¬ÎÒÃÇĞèÒª°üº¬ËùÓĞĞèÒª½øĞĞ½»»¥µÄÀàµÄÍêÕû¶¨Òå¡£
+// åœ¨.cppæ–‡ä»¶ä¸­ï¼Œæˆ‘ä»¬éœ€è¦åŒ…å«æ‰€æœ‰éœ€è¦è¿›è¡Œäº¤äº’çš„ç±»çš„å®Œæ•´å®šä¹‰ã€‚
 #include "Player.h"
 #include "Map.h"
 #include "BattleSystem.h"
@@ -16,27 +16,27 @@
 
 #include <iostream>
 #include <string>
-#include <sstream> // ÓÃÓÚ½âÎö×Ö·û´®ÊäÈë
+#include <sstream> // ç”¨äºè§£æå­—ç¬¦ä¸²è¾“å…¥
 
-// --- ¹¹Ôì/Îö¹¹º¯Êı ---
+// --- æ„é€ /ææ„å‡½æ•° ---
 
 Game::Game() {
-    // ¹¹Ôìº¯Êı¿ÉÒÔ±£³ÖÎª¿Õ£¬ÕæÕıµÄ³õÊ¼»¯ÔÚ initialize() ÖĞ½øĞĞ
-    // unique_ptr Ä¬ÈÏ»á³õÊ¼»¯Îª nullptr
+    // æ„é€ å‡½æ•°å¯ä»¥ä¿æŒä¸ºç©ºï¼ŒçœŸæ­£çš„åˆå§‹åŒ–åœ¨ initialize() ä¸­è¿›è¡Œ
+    // unique_ptr é»˜è®¤ä¼šåˆå§‹åŒ–ä¸º nullptr
 }
 
-// Îö¹¹º¯Êı±ØĞëÔÚ.cppÖĞÊµÏÖ£¬ÒòÎªÍ·ÎÄ¼şÖĞÖ»ÓĞÇ°ÏòÉùÃ÷
-// ÔÚÕâÀï£¬±àÒëÆ÷¿´µ½ÁËËùÓĞÀàµÄÍêÕû¶¨Òå£¬ÖªµÀÈçºÎÕıÈ·Ïú»Ù unique_ptr
+// ææ„å‡½æ•°å¿…é¡»åœ¨.cppä¸­å®ç°ï¼Œå› ä¸ºå¤´æ–‡ä»¶ä¸­åªæœ‰å‰å‘å£°æ˜
+// åœ¨è¿™é‡Œï¼Œç¼–è¯‘å™¨çœ‹åˆ°äº†æ‰€æœ‰ç±»çš„å®Œæ•´å®šä¹‰ï¼ŒçŸ¥é“å¦‚ä½•æ­£ç¡®é”€æ¯ unique_ptr
 Game::~Game() {
 }
 
-// --- ÓÎÏ·Ö÷Á÷³Ì¿ØÖÆ ---
+// --- æ¸¸æˆä¸»æµç¨‹æ§åˆ¶ ---
 
 bool Game::initialize(const std::string& dataFolderPath) {
-    std::cout << "ÕıÔÚ³õÊ¼»¯ÓÎÏ·..." << std::endl;
+    std::cout << "æ­£åœ¨åˆå§‹åŒ–æ¸¸æˆ..." << std::endl;
 
     try {
-        // 1. ´´½¨²¢¼ÓÔØÊı¾İ¿â (Ë³ĞòºÜÖØÒª£¬ÒòÎªÆäËûÏµÍ³ÒÀÀµËüÃÇ)
+        // 1. åˆ›å»ºå¹¶åŠ è½½æ•°æ®åº“ (é¡ºåºå¾ˆé‡è¦ï¼Œå› ä¸ºå…¶ä»–ç³»ç»Ÿä¾èµ–å®ƒä»¬)
         itemDB_ = std::make_unique<ItemDatabase>();
         itemDB_->load(dataFolderPath + "/items.json");
 
@@ -44,69 +44,69 @@ bool Game::initialize(const std::string& dataFolderPath) {
         enemyDB_->load(dataFolderPath + "/enemies.json");
 
         roomDB_ = std::make_unique<RoomDatabase>();
-        roomDB_->load(dataFolderPath + "/rooms.json");
+        roomDB_->load(dataFolderPath + "/rooms.json", itemDB_.get(), enemyDB_.get());
 
-        // 2. ´´½¨µØÍ¼²¢¹¹½¨ÊÀ½ç
+        // 2. åˆ›å»ºåœ°å›¾å¹¶æ„å»ºä¸–ç•Œ
         map_ = std::make_unique<Map>();
-        map_->buildFromDatabase(roomDB_.get()); // Ê¹ÓÃ.get()´Óunique_ptr»ñÈ¡ÂãÖ¸Õë
+        map_->buildFromDatabase(roomDB_.get()); // ä½¿ç”¨.get()ä»unique_ptrè·å–è£¸æŒ‡é’ˆ
 
-        // 3. ´´½¨Íæ¼Ò²¢ÉèÖÃ³õÊ¼Î»ÖÃ
-        player_ = std::make_unique<Player>(); // Äã¿ÉÒÔÔÚPlayer¹¹Ôìº¯ÊıÖĞÉèÖÃ³õÊ¼ÊôĞÔ
+        // 3. åˆ›å»ºç©å®¶å¹¶è®¾ç½®åˆå§‹ä½ç½®
+        player_ = std::make_unique<Player>(); // ä½ å¯ä»¥åœ¨Playeræ„é€ å‡½æ•°ä¸­è®¾ç½®åˆå§‹å±æ€§
         player_->setCurrentRoomId(map_->getStartingRoomId());
 
-        // 4. ´´½¨Õ½¶·ÏµÍ³
+        // 4. åˆ›å»ºæˆ˜æ–—ç³»ç»Ÿ
         battleSystem_ = std::make_unique<BattleSystem>();
 
-        // 5. [¹Ø¼ü] ½«ÖĞ½éÕß(Game* this)×¢ÈëĞèÒªËüµÄÍ¬ÊÂÀà
-        // ×¢Òâ: ÄãĞèÒªÔÚ BattleSystem ºÍ Player ÀàÖĞÌí¼Ó setMediator(Game* game) ·½·¨
+        // 5. [å…³é”®] å°†ä¸­ä»‹è€…(Game* this)æ³¨å…¥éœ€è¦å®ƒçš„åŒäº‹ç±»
+        // æ³¨æ„: ä½ éœ€è¦åœ¨ BattleSystem å’Œ Player ç±»ä¸­æ·»åŠ  setMediator(Game* game) æ–¹æ³•
         battleSystem_->setMediator(this);
-        // player_->setMediator(this); // Èç¹ûPlayerÒ²ĞèÒª»Øµ÷Game£¬Ò²Ìí¼ÓÕâĞĞ
+        // player_->setMediator(this); // å¦‚æœPlayerä¹Ÿéœ€è¦å›è°ƒGameï¼Œä¹Ÿæ·»åŠ è¿™è¡Œ
 
     }
     catch (const std::exception& e) {
-        // Èç¹ûÈÎºÎ²½ÖèÊ§°Ü£¨ÀıÈçÎÄ¼şÕÒ²»µ½¡¢JSON¸ñÊ½´íÎó£©£¬Ôò³õÊ¼»¯Ê§°Ü
-        std::cerr << "³õÊ¼»¯Ê§°Ü: " << e.what() << std::endl;
+        // å¦‚æœä»»ä½•æ­¥éª¤å¤±è´¥ï¼ˆä¾‹å¦‚æ–‡ä»¶æ‰¾ä¸åˆ°ã€JSONæ ¼å¼é”™è¯¯ï¼‰ï¼Œåˆ™åˆå§‹åŒ–å¤±è´¥
+        std::cerr << "åˆå§‹åŒ–å¤±è´¥: " << e.what() << std::endl;
         return false;
     }
 
     isRunning_ = true;
-    std::cout << "³õÊ¼»¯³É¹¦£¡" << std::endl;
+    std::cout << "åˆå§‹åŒ–æˆåŠŸï¼" << std::endl;
     return true;
 }
 
 void Game::run() {
     if (!isRunning_) {
-        std::cout << "ÓÎÏ·Î´³õÊ¼»¯¡£" << std::endl;
+        std::cout << "æ¸¸æˆæœªåˆå§‹åŒ–ã€‚" << std::endl;
         return;
     }
 
-    std::cout << "\n»¶Ó­À´µ½ MUD ÊÀ½ç£¡" << std::endl;
-    std::cout << "ÊäÈë 'help' ²é¿´¿ÉÓÃÖ¸Áî¡£" << std::endl;
+    std::cout << "\næ¬¢è¿æ¥åˆ° MUD ä¸–ç•Œï¼" << std::endl;
+    std::cout << "è¾“å…¥ 'help' æŸ¥çœ‹å¯ç”¨æŒ‡ä»¤ã€‚" << std::endl;
 
-    // ´¥·¢½øÈë³õÊ¼·¿¼äµÄÂß¼­
+    // è§¦å‘è¿›å…¥åˆå§‹æˆ¿é—´çš„é€»è¾‘
     enterRoom(player_->getCurrentRoomId());
 
     while (isRunning_) {
         gameLoop();
     }
 
-    std::cout << "¸ĞĞ»ÓÎÍæ£¬ÔÙ¼û£¡" << std::endl;
+    std::cout << "æ„Ÿè°¢æ¸¸ç©ï¼Œå†è§ï¼" << std::endl;
 }
 
 
-// --- ÖĞ½éÕß½Ó¿ÚÊµÏÖ ---
+// --- ä¸­ä»‹è€…æ¥å£å®ç° ---
 
 void Game::notifyBattleFinished(bool playerWon, const std::vector<unsigned int>& lootItemIds) {
-    std::cout << "\n[ÏµÍ³] Õ½¶·½áÊø¡£" << std::endl;
-    // Õ½¶·½áÊøºó£¬µ÷ÓÃÄÚ²¿Âß¼­´¦ÀíºóĞøÊÂÒË
+    std::cout << "\n[ç³»ç»Ÿ] æˆ˜æ–—ç»“æŸã€‚" << std::endl;
+    // æˆ˜æ–—ç»“æŸåï¼Œè°ƒç”¨å†…éƒ¨é€»è¾‘å¤„ç†åç»­äº‹å®œ
     processBattleAftermath(playerWon, lootItemIds);
 }
 
 
-// --- ÄÚ²¿Âß¼­ÓëÁ÷³Ì´¦Àí ---
+// --- å†…éƒ¨é€»è¾‘ä¸æµç¨‹å¤„ç† ---
 
 void Game::gameLoop() {
-    std::cout << "\n> "; // ÏÔÊ¾ÊäÈëÌáÊ¾·û
+    std::cout << "\n> "; // æ˜¾ç¤ºè¾“å…¥æç¤ºç¬¦
     processPlayerInput();
 }
 
@@ -114,17 +114,17 @@ void Game::processPlayerInput() {
     std::string line;
     std::getline(std::cin, line);
 
-    // Ê¹ÓÃ stringstream À´ÇáËÉ·Ö¸îÃüÁîºÍ²ÎÊı
+    // ä½¿ç”¨ stringstream æ¥è½»æ¾åˆ†å‰²å‘½ä»¤å’Œå‚æ•°
     std::stringstream ss(line);
     std::string command;
     ss >> command;
 
-    // ½«ÃüÁî×ªÎªĞ¡Ğ´£¬·½±ã±È½Ï
+    // å°†å‘½ä»¤è½¬ä¸ºå°å†™ï¼Œæ–¹ä¾¿æ¯”è¾ƒ
     for (char& c : command) {
         c = tolower(c);
     }
 
-    // ¸ù¾İÃüÁî·Ö·¢µ½²»Í¬µÄ´¦Àíº¯Êı
+    // æ ¹æ®å‘½ä»¤åˆ†å‘åˆ°ä¸åŒçš„å¤„ç†å‡½æ•°
     if (command == "go" || command == "move") {
         std::string direction;
         ss >> direction;
@@ -153,51 +153,51 @@ void Game::processPlayerInput() {
         handleQuitCommand();
     }
     else {
-        std::cout << "Î´ÖªÖ¸Áî¡£ÊäÈë 'help' ²é¿´°ïÖú¡£" << std::endl;
+        std::cout << "æœªçŸ¥æŒ‡ä»¤ã€‚è¾“å…¥ 'help' æŸ¥çœ‹å¸®åŠ©ã€‚" << std::endl;
     }
 }
 
 void Game::displayCurrentState() const {
     Room* currentRoom = map_->getRoom(player_->getCurrentRoomId());
     if (!currentRoom) {
-        std::cerr << "´íÎó£ºÍæ¼Òµ±Ç°·¿¼äÎŞĞ§£¡" << std::endl;
+        std::cerr << "é”™è¯¯ï¼šç©å®¶å½“å‰æˆ¿é—´æ— æ•ˆï¼" << std::endl;
         return;
     }
 
-    // µ÷ÓÃRoom×Ô¼ºµÄ·½·¨À´ÏÔÊ¾ĞÅÏ¢ (ÕâÊÇRoomÀàµÄÖ°Ôğ)
+    // è°ƒç”¨Roomè‡ªå·±çš„æ–¹æ³•æ¥æ˜¾ç¤ºä¿¡æ¯ (è¿™æ˜¯Roomç±»çš„èŒè´£)
     currentRoom->display();
 }
 
 void Game::enterRoom(unsigned int newRoomId) {
     player_->setCurrentRoomId(newRoomId);
     std::cout << "\n----------------------------------------" << std::endl;
-    handleLookCommand(); // ½øÈëĞÂ·¿¼äºó×Ô¶¯Ö´ĞĞ "look"
+    handleLookCommand(); // è¿›å…¥æ–°æˆ¿é—´åè‡ªåŠ¨æ‰§è¡Œ "look"
 
-    // ¼ì²é·¿¼äÄÚÊÇ·ñÓĞµĞÈË£¬²¢¿ÉÄÜ´¥·¢Õ½¶·
+    // æ£€æŸ¥æˆ¿é—´å†…æ˜¯å¦æœ‰æ•Œäººï¼Œå¹¶å¯èƒ½è§¦å‘æˆ˜æ–—
     checkForEnemiesAndInitiateBattle();
 }
 
 
-// --- Íæ¼ÒÖ¸Áî´¦Àíº¯Êı ---
+// --- ç©å®¶æŒ‡ä»¤å¤„ç†å‡½æ•° ---
 
 void Game::handleMoveCommand(const std::string& direction) {
     if (direction.empty()) {
-        std::cout << "ÄãÒªÍùÄÄ¸ö·½Ïò×ß£¿(north, south, east, west...)" << std::endl;
+        std::cout << "ä½ è¦å¾€å“ªä¸ªæ–¹å‘èµ°ï¼Ÿ(north, south, east, west...)" << std::endl;
         return;
     }
 
     unsigned int currentRoomId = player_->getCurrentRoomId();
     Room* currentRoom = map_->getRoom(currentRoomId);
 
-    // ÏòMapÏµÍ³²éÑ¯³ö¿ÚĞÅÏ¢
+    // å‘Mapç³»ç»ŸæŸ¥è¯¢å‡ºå£ä¿¡æ¯
     int nextRoomId = currentRoom->getExit(direction);
 
-    if (nextRoomId != -1) { // -1 ´ú±íÃ»ÓĞ³ö¿Ú
-        std::cout << "ÄãÏò " << direction << " ·½Ïò×ßÈ¥..." << std::endl;
+    if (nextRoomId != -1) { // -1 ä»£è¡¨æ²¡æœ‰å‡ºå£
+        std::cout << "ä½ å‘ " << direction << " æ–¹å‘èµ°å»..." << std::endl;
         enterRoom(static_cast<unsigned int>(nextRoomId));
     }
     else {
-        std::cout << "Õâ¸ö·½ÏòÃ»ÓĞÂ·¡£" << std::endl;
+        std::cout << "è¿™ä¸ªæ–¹å‘æ²¡æœ‰è·¯ã€‚" << std::endl;
     }
 }
 
@@ -207,91 +207,120 @@ void Game::handleLookCommand() const {
 
 void Game::handleAttackCommand(const std::string& targetName) {
     if (targetName.empty()) {
-        std::cout << "ÄãÒª¹¥»÷Ë­£¿" << std::endl;
+        std::cout << "ä½ è¦æ”»å‡»è°ï¼Ÿ" << std::endl;
         return;
     }
-    // TODO: ÊµÏÖ¹¥»÷Âß¼­
-    // 1. »ñÈ¡µ±Ç°·¿¼ä
-    // 2. ÔÚ·¿¼äµÄµĞÈËÁĞ±íÖĞ²éÕÒÃû½Ğ targetName µÄµĞÈË
-    // 3. Èç¹ûÕÒµ½£¬µ÷ÓÃ battleSystem_->startBattle(player_.get(), enemy);
-    // 4. Èç¹ûÃ»ÕÒµ½£¬ÌáÊ¾Íæ¼Ò
-    std::cout << "Äã³¢ÊÔ¹¥»÷ " << targetName << "£¬µ«Õ½¶·ÏµÍ³ÉĞÎ´ÊµÏÖ¡£" << std::endl;
+
+    Room* currentRoom = map_->getRoom(player_->getCurrentRoomId());
+    if (!currentRoom || currentRoom->enemies.empty()) {
+        std::cout << "è¿™é‡Œæ²¡æœ‰æ•Œäººã€‚" << std::endl;
+        return;
+    }
+
+    // æŸ¥æ‰¾æ•Œäºº
+    Enemy* target = nullptr;
+    for (const auto& enemy : currentRoom->enemies) {
+        if (enemy->getName() == targetName) { // è¿™é‡Œå¯ä»¥ç”¨æ›´çµæ´»çš„åŒ¹é…
+            target = enemy.get();
+            break;
+        }
+    }
+
+    if (target) {
+        // [ä¸­ä»‹è€…æ¨¡å¼] Gameå‘½ä»¤BattleSystemå¼€å§‹æˆ˜æ–—
+        battleSystem_->startBattle(player_.get(), target);
+    }
+    else {
+        std::cout << "è¿™é‡Œæ²¡æœ‰åå« " << targetName << " çš„æ•Œäººã€‚" << std::endl;
+    }
 }
 
 void Game::handleTakeCommand(const std::string& itemName) {
     if (itemName.empty()) {
-        std::cout << "ÄãÒªÊ°È¡Ê²Ã´£¿" << std::endl;
+        std::cout << "ä½ è¦æ‹¾å–ä»€ä¹ˆï¼Ÿ" << std::endl;
         return;
     }
-    // TODO: ÊµÏÖÊ°È¡Âß¼­
-    // 1. »ñÈ¡µ±Ç°·¿¼ä
-    // 2. ÔÚ·¿¼äµÄÎïÆ·ÁĞ±íÖĞ²éÕÒÃû½Ğ itemName µÄÎïÆ·
-    // 3. Èç¹ûÕÒµ½£¬´Ó·¿¼äÒÆ³ı¸ÃÎïÆ·£¬²¢Ìí¼Óµ½Íæ¼ÒµÄÎïÆ·À¸
-    // 4. Èç¹ûÃ»ÕÒµ½£¬ÌáÊ¾Íæ¼Ò
-    std::cout << "Äã³¢ÊÔÊ°È¡ " << itemName << "£¬µ«Ê°È¡ÏµÍ³ÉĞÎ´ÊµÏÖ¡£" << std::endl;
+    // TODO: å®ç°æ‹¾å–é€»è¾‘
+    // 1. è·å–å½“å‰æˆ¿é—´
+    Room* currentRoom = map_->getRoom(player_->getCurrentRoomId());
+    if (!currentRoom) return;
+
+    // 2. å°è¯•ä»æˆ¿é—´æ‹¿å‡ºç‰©å“ (ä¸­ä»‹è€…åè°ƒ)
+    std::unique_ptr<Item> item = currentRoom->takeItem(itemName);
+
+    // 3. å¦‚æœæˆåŠŸï¼Œåˆ™äº¤ç»™ç©å®¶ (ä¸­ä»‹è€…åè°ƒ)
+    if (item) {
+        player_->addItemToInventory(std::move(item));
+    }
+    else {
+        std::cout << "åœ°ä¸Šæ²¡æœ‰è¿™ä¸ªä¸œè¥¿ã€‚" << std::endl;
+    }
 }
 
 void Game::handleInventoryCommand() const {
-    // TODO: µ÷ÓÃplayer_->displayInventory();
-    std::cout << "ÄãµÄ±³°üÊÇ¿ÕµÄ£¨ÎïÆ·À¸ÏµÍ³ÉĞÎ´ÊµÏÖ£©¡£" << std::endl;
+    player_->displayInventory();
+    //std::cout << "ä½ çš„èƒŒåŒ…æ˜¯ç©ºçš„ï¼ˆç‰©å“æ ç³»ç»Ÿå°šæœªå®ç°ï¼‰ã€‚" << std::endl;
 }
 
 void Game::handleHelpCommand() const {
-    std::cout << "--- ¿ÉÓÃÖ¸Áî ---\n"
-        << "go [direction] - ÏòÖ¸¶¨·½ÏòÒÆ¶¯ (e.g., go north)\n"
-        << "look           - ²é¿´µ±Ç°»·¾³\n"
-        << "attack [name]  - ¹¥»÷Ö¸¶¨µĞÈË\n"
-        << "take [item]    - Ê°È¡µØÉÏµÄÎïÆ·\n"
-        << "inventory      - ²é¿´ÄãµÄ±³°ü\n"
-        << "quit           - Àë¿ªÓÎÏ·\n"
+    std::cout << "--- å¯ç”¨æŒ‡ä»¤ ---\n"
+        << "go [direction] - å‘æŒ‡å®šæ–¹å‘ç§»åŠ¨ (e.g., go north)\n"
+        << "look           - æŸ¥çœ‹å½“å‰ç¯å¢ƒ\n"
+        << "attack [name]  - æ”»å‡»æŒ‡å®šæ•Œäºº\n"
+        << "take [item]    - æ‹¾å–åœ°ä¸Šçš„ç‰©å“\n"
+        << "inventory      - æŸ¥çœ‹ä½ çš„èƒŒåŒ…\n"
+        << "quit           - ç¦»å¼€æ¸¸æˆ\n"
         << "-----------------" << std::endl;
 }
 
 void Game::handleQuitCommand() {
-    std::cout << "ÄãÈ·¶¨ÒªÀë¿ªÓÎÏ·Âğ£¿(yes/no)" << std::endl;
+    std::cout << "ä½ ç¡®å®šè¦ç¦»å¼€æ¸¸æˆå—ï¼Ÿ(yes/no)" << std::endl;
     std::string confirmation;
     std::cin >> confirmation;
-    // ÇåÀícinµÄ»º³åÇø
+    // æ¸…ç†cinçš„ç¼“å†²åŒº
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     if (confirmation == "yes" || confirmation == "y") {
         isRunning_ = false;
     }
     else {
-        std::cout << "Äã¾ö¶¨¼ÌĞøÃ°ÏÕ¡£" << std::endl;
+        std::cout << "ä½ å†³å®šç»§ç»­å†’é™©ã€‚" << std::endl;
     }
 }
 
 
-// --- ÄÚ²¿ÊÂ¼ş´¦Àí ---
+// --- å†…éƒ¨äº‹ä»¶å¤„ç† ---
 
 void Game::checkForEnemiesAndInitiateBattle() {
-    // TODO: ÍêÉÆÕ½¶·´¥·¢Âß¼­
-    // 1. »ñÈ¡µ±Ç°·¿¼ä
-    // 2. ¼ì²é·¿¼äÄÚÊÇ·ñÓĞµĞÈË
-    // 3. Èç¹ûÓĞ£¬¿ÉÒÔÉè¼Æ³É×Ô¶¯½øÈëÕ½¶·£¬»òÕßÈÃÍæ¼ÒÑ¡Ôñ¹¥»÷
-    //    ÔÚÕâÀïÎÒÃÇÏÈ¼ÙÉèÈç¹û·¿¼äÓĞµĞÈË¾Í×Ô¶¯¿ªÕ½
-    //    battleSystem_->startBattle(player_.get(), room->getEnemies()[0]);
-
-    // Ä¿Ç°Ö»ÊÇÒ»¸öÕ¼Î»·û
     Room* currentRoom = map_->getRoom(player_->getCurrentRoomId());
-    if (currentRoom && !currentRoom->getEnemies().empty()) {
-        std::cout << "ÄãÔâÓöÁËµĞÈË£¡(Õ½¶·ÏµÍ³´ıÊµÏÖ)" << std::endl;
+    // ç®€å•è®¾è®¡ï¼šå¦‚æœæˆ¿é—´é‡Œæœ‰æ•Œäººï¼Œè‡ªåŠ¨è§¦å‘ä¸ç¬¬ä¸€ä¸ªæ•Œäººçš„æˆ˜æ–—
+    if (currentRoom && !currentRoom->enemies.empty()) {
+        std::cout << "\nä½ é­é‡äº†æ•Œäººï¼" << std::endl;
+        // ä½¿ç”¨ .get() ä» unique_ptr è·å–è£¸æŒ‡é’ˆ
+        battleSystem_->startBattle(player_.get(), currentRoom->enemies[0].get());
     }
 }
 
 void Game::processBattleAftermath(bool playerWon, const std::vector<unsigned int>& lootItemIds) {
+    Room* currentRoom = map_->getRoom(player_->getCurrentRoomId());
+    if (!currentRoom) return;
+
     if (playerWon) {
-        std::cout << "ÄãÈ¡µÃÁËÊ¤Àû£¡" << std::endl;
-        // TODO: ´¦ÀíÕ½ÀûÆ·
-        // 1. »ñÈ¡µ±Ç°·¿¼ä
-        // 2. Çå¿Õ·¿¼äÀïµÄµĞÈË (»òÕßÖ»ÒÆ³ı±»»÷°ÜµÄÄÇ¸ö)
-        // 3. ¸ù¾İ lootItemIds£¬´Ó itemDB_ »ñÈ¡ÎïÆ·Ô­ĞÍ
-        // 4. ½«ÎïÆ·ÊµÀıÌí¼Óµ½·¿¼äµÄµØÃæÉÏ
-        // 5. ÏÔÊ¾µôÂäĞÅÏ¢
+        std::cout << "ä½ å–å¾—äº†èƒœåˆ©ï¼" << std::endl;
+        // æ¸…ç©ºæˆ¿é—´é‡Œçš„æ‰€æœ‰æ•Œäºº (ç®€åŒ–å¤„ç†)
+        currentRoom->enemies.clear();
+
+        // æ ¹æ®æˆ˜åˆ©å“IDï¼Œä»ItemDatabaseåˆ›å»ºç‰©å“å®ä¾‹å¹¶æ”¾åˆ°åœ°ä¸Š
+        for (unsigned int itemId : lootItemIds) {
+            auto lootItem = itemDB_->createInstance(itemId);
+            if (lootItem) {
+                std::cout << "æ•Œäººæ‰è½äº† [" << lootItem->getName() << "]ã€‚" << std::endl;
+                currentRoom->items.push_back(std::move(lootItem));
+            }
+        }
     }
     else {
-        std::cout << "Äã±»»÷°ÜÁË... ÓÎÏ·½áÊø¡£" << std::endl;
-        isRunning_ = false; // Íæ¼ÒËÀÍö£¬ÓÎÏ·½áÊø
+        std::cout << "ä½ è¢«å‡»è´¥äº†... æ¸¸æˆç»“æŸã€‚" << std::endl;
+        isRunning_ = false; // ç©å®¶æ­»äº¡ï¼Œæ¸¸æˆç»“æŸ
     }
 }

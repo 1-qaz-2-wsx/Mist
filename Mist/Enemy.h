@@ -25,4 +25,8 @@ public:
     // --- 重写(override)基类的虚函数 ---
     virtual void fromJson(const json& j) override;
     virtual void toJson(json& j) const override;
+
+	// --- 战斗相关方法 ---
+    void takeDamage(int damageAmount);
+    bool isAlive() const;
 };

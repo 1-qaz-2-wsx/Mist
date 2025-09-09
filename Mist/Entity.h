@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <string> 
 #include "json.hpp"
 
@@ -7,8 +7,8 @@ using json = nlohmann::json;
 class Entity
 {
 protected:
-	std::string name;  //Ãû³Æ
-	unsigned int id;  //Î¨Ò»ID
+	std::string name_;  //åç§°
+	unsigned int id_;  //å”¯ä¸€ID
 public:
 	Entity();
 	Entity(const std::string& name, unsigned int id);
@@ -16,17 +16,12 @@ public:
 	const std::string& getName()const;
 	unsigned int getId() const;
 
-	//±È½Ïº¯Êı
-	std::string CompName() const; //·µ»ØĞ¡Ğ´Ãû³Æ
 
-	bool FullMatch(const std::string& name) const; //ÍêÈ«Æ¥Åä
-	bool Match(const std::string& name) const; //²¿·ÖÆ¥Åä
+	// JSON è¯»å†™
+	virtual void toJson(json& j) const; //è½¬æ¢ä¸º JSON å¯¹è±¡
+	virtual void fromJson(const json& j); //ä» JSON å¯¹è±¡åŠ è½½
 
-	// JSON ¶ÁĞ´
-	virtual void toJson(json& j) const; //×ª»»Îª JSON ¶ÔÏó
-	virtual void fromJson(const json& j); //´Ó JSON ¶ÔÏó¼ÓÔØ
-
-	//Îö¹¹º¯Êı
+	//ææ„å‡½æ•°
 	virtual ~Entity() {};
 
 };

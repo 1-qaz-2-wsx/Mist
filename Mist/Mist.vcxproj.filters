@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{dc0aea82-6dad-44b8-a3d5-7c80b49469a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Mist.cpp">
@@ -108,6 +111,18 @@
     </None>
     <None Include="enymies.json">
       <Filter>资源文件</Filter>
+    </None>
+    <None Include="data\enemies.json">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="data\items.json">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="data\map.json">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="data\rooms.json">
+      <Filter>Data</Filter>
     </None>
   </ItemGroup>
 </Project>

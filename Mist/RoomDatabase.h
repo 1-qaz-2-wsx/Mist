@@ -1,41 +1,41 @@
-#pragma once
-#include <memory>
-#include <map>
+ï»¿#pragma once
+
 #include <string>
+#include <unordered_map>
+#include <memory>
+#include <vector>
+#include "Room.h"
 
-class Room;
+// å‰å‘å£°æ˜ï¼Œé¿å…åŒ…å«å¤´æ–‡ä»¶
+class ItemDatabase;
+class EnemyDatabase;
 
-class RoomDatabase
-{
-private:
-	std::map<unsigned int, std::shared_ptr<Room>> rooms; //·¿¼äID->·¿¼äÖ¸Õë
-	
+class RoomDatabase {
 public:
-	RoomDatabase();
-	RoomDatabase(const std::string& filename); //¹¹ÔìÊ±¿ÉÖ±½Ó´ÓÎÄ¼ş¼ÓÔØ
+    /**
+     * @brief ä»JSONæ–‡ä»¶åŠ è½½æˆ¿é—´æ•°æ®ï¼Œå¹¶å€ŸåŠ©å…¶ä»–æ•°æ®åº“æ¥æ„å»ºå®Œæ•´çš„æˆ¿é—´
+     * @param filename rooms.json çš„è·¯å¾„
+     * @param itemDB æŒ‡å‘ ItemDatabase çš„æŒ‡é’ˆ
+     * @param enemyDB æŒ‡å‘ EnemyDatabase çš„æŒ‡é’ˆ
+     * @return æ˜¯å¦åŠ è½½æˆåŠŸ
+     */
+    bool load(const std::string& filename, const ItemDatabase* itemDB, const EnemyDatabase* enemyDB);
 
+    // æ³¨æ„ï¼šæˆ‘ä»¬å°†ä¸å†éœ€è¦ getRoomTemplateï¼Œå› ä¸ºæˆ¿é—´éœ€è¦è¢«å®ä¾‹åŒ–ã€‚
+    // æˆ‘ä»¬ç›´æ¥æä¾›ä¸€ä¸ªåˆ›å»ºå®ä¾‹çš„æ¥å£ã€‚
 
-	//Ìí¼Ó·¿¼ä
-	bool addRoom(const std::shared_ptr<Room>& room); //Ìí¼Ó·¿¼ä£¬ÈôIDÒÑ´æÔÚ·µ»Øfalse
-	//ÒÆ³ı·¿¼ä
-	bool removeRoom(unsigned int roomId); //ÒÆ³ı·¿¼ä£¬ÈôID²»´æÔÚ·µ»Øfalse
+    /**
+     * @brief æ ¹æ®æˆ¿é—´IDåˆ›å»ºä¸€ä¸ªæ–°çš„æˆ¿é—´å®ä¾‹ï¼ˆæ·±æ‹·è´ï¼‰
+     * @param roomId æˆ¿é—´çš„å”¯ä¸€ID
+     * @return æŒ‡å‘æ–°Roomå®ä¾‹çš„unique_ptrï¼Œæ‰¾ä¸åˆ°åˆ™ä¸ºç©º
+     */
+    std::unique_ptr<Room> createInstance(unsigned int roomId) const;
+    /**
+     * @brief è·å–æ•°æ®åº“ä¸­æ‰€æœ‰æˆ¿é—´æ¨¡æ¿çš„IDåˆ—è¡¨
+     */
+    std::vector<unsigned int> getAllRoomIds() const;
 
-	//»ñÈ¡·¿¼ä
-	std::shared_ptr<Room> getRoom(unsigned int roomId) const; //»ñÈ¡·¿¼ä£¬ÈôID²»´æÔÚ·µ»Ønullptr
-	//¼ì²é·¿¼äÊÇ·ñ´æÔÚ
-	bool hasRoom(unsigned int roomId) const; //¼ì²é·¿¼äÊÇ·ñ´æÔÚ
-	//»ñÈ¡ËùÓĞ·¿¼ä
-	const std::map<unsigned int, std::shared_ptr<Room>>& getAllRooms() const; //»ñÈ¡ËùÓĞ·¿¼ä
-	
-	// JSON ¶ÁĞ´£¬¾ÍÊÇ½«Êı¾İ¿â´¢´æµÄËùÓĞRoom¶ÁĞ´µ½ÎÄ¼ş£¬ËùÒÔº¯ÊıÀï»áµ÷ÓÃRoom³ÉÔ±º¯Êı£¬ÒÔ½«Ã¿¸öRoom¶ÁĞ´µ½ÎÄ¼ş¡£
-	bool loadFromFile(const std::string& filename); //´ÓÎÄ¼ş¼ÓÔØ·¿¼äÊı¾İ  Ìî³ärooms
-	bool saveToFile(const std::string& filename) const; //±£´æ·¿¼äÊı¾İµ½ÎÄ¼ş£¬jsonÎÄ¼şÀïÒÔÊı×éĞÎÊ½´¢´æ¡£
-
-
-	//Îö¹¹º¯Êı
-	~RoomDatabase();
-
-
-
+private:
+    // æ•°æ®åº“ç°åœ¨å­˜å‚¨çš„æ˜¯æˆ¿é—´çš„â€œæ¨¡æ¿â€
+    std::unordered_map<unsigned int, Room> roomTemplates_;
 };
-

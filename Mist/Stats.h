@@ -1,6 +1,6 @@
-#pragma once
+ï»¿#pragma once
 
-#include "json.hpp" // °üº¬json¿â
+#include "json.hpp" // åŒ…å«jsonåº“
 
 using json = nlohmann::json;
 
@@ -9,10 +9,10 @@ struct Stats {
     int attack = 0;
     int defense = 0;
 
-    // ÎªÁË·½±ã£¬Ö±½ÓÔÚÕâÀïÊµÏÖ fromJson/toJson
+    // ä¸ºäº†æ–¹ä¾¿ï¼Œç›´æ¥åœ¨è¿™é‡Œå®ç° fromJson/toJson
     void fromJson(const json& j) {
-        // Ê¹ÓÃ .value(key, defaultValue) ÊÇÒ»¸ö¸ü°²È«µÄ·½·¨£¬
-        // Èç¹ûjsonÖĞÈ±ÉÙÄ³¸ö×Ö¶Î£¬Ëü²»»áÅ×³öÒì³££¬¶øÊÇÊ¹ÓÃÄ¬ÈÏÖµ¡£
+        // ä½¿ç”¨ .value(key, defaultValue) æ˜¯ä¸€ä¸ªæ›´å®‰å…¨çš„æ–¹æ³•ï¼Œ
+        // å¦‚æœjsonä¸­ç¼ºå°‘æŸä¸ªå­—æ®µï¼Œå®ƒä¸ä¼šæŠ›å‡ºå¼‚å¸¸ï¼Œè€Œæ˜¯ä½¿ç”¨é»˜è®¤å€¼ã€‚
         maxHp = j.value("maxHp", 0);
         attack = j.value("attack", 0);
         defense = j.value("defense", 0);

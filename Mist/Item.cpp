@@ -1,20 +1,20 @@
-#include "Item.h"
+ï»¿#include "Item.h"
 
 void Item::fromJson(const json& j) {
-    // 1. µ÷ÓÃ»ùÀà(Entity)µÄ fromJson º¯ÊýÀ´¼ÓÔØÍ¨ÓÃÊý¾Ý (id ºÍ name)
-    // ÕâÊÇÊµÏÖ¼Ì³ÐµÄ¹Ø¼üÒ»²½£¬±ÜÃâÁËÖØ¸´´úÂë
+    // 1. è°ƒç”¨åŸºç±»(Entity)çš„ fromJson å‡½æ•°æ¥åŠ è½½é€šç”¨æ•°æ® (id å’Œ name)
+    // è¿™æ˜¯å®žçŽ°ç»§æ‰¿çš„å…³é”®ä¸€æ­¥ï¼Œé¿å…äº†é‡å¤ä»£ç 
     Entity::fromJson(j);
 
-    // 2. ¼ÓÔØ Item Àà×Ô¼ºÌØÓÐµÄÊý¾Ý
+    // 2. åŠ è½½ Item ç±»è‡ªå·±ç‰¹æœ‰çš„æ•°æ®
     description = j.at("description").get<std::string>();
 
-    // Èç¹ûÎ´À´ Item ÓÐ¸ü¶àÊôÐÔ (±ÈÈç¹¥»÷Á¦)£¬Ò²ÔÚÕâÀï¼ÓÔØ
-    // attackDamage = j.value("attack", 0); // .value() ¿ÉÒÔÌá¹©Ä¬ÈÏÖµ£¬¸ü°²È«
+    // å¦‚æžœæœªæ¥ Item æœ‰æ›´å¤šå±žæ€§ (æ¯”å¦‚æ”»å‡»åŠ›)ï¼Œä¹Ÿåœ¨è¿™é‡ŒåŠ è½½
+    // attackDamage = j.value("attack", 0); // .value() å¯ä»¥æä¾›é»˜è®¤å€¼ï¼Œæ›´å®‰å…¨
 }
 
 void Item::toJson(json& j) const {
-    // Í¬Ñù£¬ÏÈµ÷ÓÃ»ùÀàµÄ toJson º¯Êý
+    // åŒæ ·ï¼Œå…ˆè°ƒç”¨åŸºç±»çš„ toJson å‡½æ•°
     Entity::toJson(j);
-    // ÔÙÌí¼Ó×Ô¼ºµÄÊý¾Ý
+    // å†æ·»åŠ è‡ªå·±çš„æ•°æ®
     j["description"] = description;
 }

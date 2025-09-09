@@ -1,4 +1,4 @@
-#include "EnemyDatabase.h"
+ï»¿#include "EnemyDatabase.h"
 #include "json.hpp"
 #include <fstream>
 #include <iostream>
@@ -45,8 +45,8 @@ const Enemy* EnemyDatabase::getEnemyTemplate(unsigned int enemyId) const {
 std::unique_ptr<Enemy> EnemyDatabase::createInstance(unsigned int enemyId) const {
     const Enemy* enemyTemplate = getEnemyTemplate(enemyId);
     if (enemyTemplate) {
-        // ´´½¨Ò»¸öÄ£°åµÄ¿½±´¡£ÕâºÜÖØÒª£¬ÒòÎªÃ¿¸ö³öÏÖÔÚÓÎÏ·ÀïµÄµĞÈË
-        // ¶¼ĞèÒªÓĞ×Ô¼º¶ÀÁ¢µÄ currentHp µÈ×´Ì¬¡£
+        // åˆ›å»ºä¸€ä¸ªæ¨¡æ¿çš„æ‹·è´ã€‚è¿™å¾ˆé‡è¦ï¼Œå› ä¸ºæ¯ä¸ªå‡ºç°åœ¨æ¸¸æˆé‡Œçš„æ•Œäºº
+        // éƒ½éœ€è¦æœ‰è‡ªå·±ç‹¬ç«‹çš„ currentHp ç­‰çŠ¶æ€ã€‚
         return std::make_unique<Enemy>(*enemyTemplate);
     }
     return nullptr;

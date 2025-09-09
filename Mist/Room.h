@@ -1,104 +1,58 @@
-#pragma once
+ï»¿#pragma once
+
 #include "Entity.h"
-#include <map>
+#include <string>
 #include <vector>
+#include <map>
+#include <memory>
 
+// å‰å‘å£°æ˜ï¼Œé¿å…åœ¨å¤´æ–‡ä»¶ä¸­å¼•å…¥å®Œæ•´çš„ Item.h å’Œ Enemy.hï¼Œé™ä½è€¦åˆåº¦
+class Item;
 class Enemy;
-class EnemyDatabase;
 
-enum RoomType {
-	DEFAULT,
-    FIGHT,
-    STORE,
-    ENCOUNTER,
-    NUMROOM
-};
+using json = nlohmann::json;
 
-enum DIRECTION {
-	NORTH,
-	SOUTH,
-	EAST,
-	WEST,
+class Room : public Entity {
+public:
+    std::string description;
 
-	UP,
-	DOWN,
-	IN,
-	OUT,
-	NUMDIR
-};
+    // å‡ºå£åˆ—è¡¨: é”®æ˜¯æ–¹å‘(string)ï¼Œå€¼æ˜¯ç›®æ ‡æˆ¿é—´çš„ID(unsigned int)
+    std::map<std::string, unsigned int> exits;
 
+    // æˆ¿é—´å†…çš„æ•Œäººåˆ—è¡¨ã€‚ä½¿ç”¨æ™ºèƒ½æŒ‡é’ˆï¼Œå› ä¸ºæ¯ä¸ªæ•Œäººéƒ½æ˜¯ä¸€ä¸ªç‹¬ç«‹å®ä¾‹
+    std::vector<std::unique_ptr<Enemy>> enemies;
 
-
-class Room :
-    public Entity
-{
-private:
-    RoomType type;
-    std::string des; //·¿¼äĞÅÏ¢ÃèÊö
-	std::map<DIRECTION, unsigned int> exits; //³ö¿Ú£¬·½Ïò->·¿¼äID
-	std::vector<unsigned int> items; //·¿¼äÄÚÎïÆ·ID
-	std::vector<unsigned int> enemys; //·¿¼äÄÚµĞÈËID
-	std::vector<unsigned int> npcs; //·¿¼äÄÚNPC ID
-
-
+    // æˆ¿é—´åœ°ä¸Šçš„ç‰©å“åˆ—è¡¨
+    std::vector<std::unique_ptr<Item>> items;
 
 public:
+    Room() = default;
 
-	Room();
-	Room(const std::string& name, unsigned int id, RoomType type, const std::string& des);
-	
-	//·ÃÎÊÆ÷
-	RoomType getType() const;
-	const std::string& getDes() const;
-
-	//ĞŞ¸ÄÆ÷
-	void setType(RoomType type);
-	void setDes(const std::string& des);
-
-	//³ö¿ÚÏà¹Ø
-	void addExit(DIRECTION dir, unsigned int roomId); //Ìí¼Ó³ö¿Ú
-	const std::map<DIRECTION, unsigned int>& getExits() const; //»ñÈ¡ËùÓĞ³ö¿Ú
-	bool removeExit(DIRECTION); //ÒÆ³ı³ö¿Ú
-	bool hasExit(DIRECTION) const; //ÊÇ·ñÓĞ¸Ã·½ÏòµÄ³ö¿Ú
-	unsigned int getExit(DIRECTION) const; //»ñÈ¡¸Ã·½ÏòµÄ·¿¼äID£¬ÈôÎŞ¸Ã·½Ïò·µ»Ø0
-
-	//ÎïÆ·Ïà¹Ø
-	void addItem(unsigned int itemId); //Ìí¼ÓÎïÆ·
-	bool removeItem(unsigned int itemId); //ÒÆ³ıÎïÆ·
-	bool hasItem(unsigned int itemId) const; //ÊÇ·ñÓĞ¸ÃÎïÆ·
-	const std::vector<unsigned int>& getItems() const; //»ñÈ¡·¿¼äÄÚËùÓĞÎïÆ·ID
-
-	//µĞÈËÏà¹Ø
-	void addEnemy(unsigned int enemyId); //Ìí¼ÓµĞÈË
-	bool removeEnemy(unsigned int enemyId); //ÒÆ³ıµĞÈË
-	bool hasEnemy(unsigned int enemyId) const; //ÊÇ·ñÓĞ¸ÃµĞÈË
-	const std::vector<unsigned int>& getEnemys() const; //»ñÈ¡·¿¼äÄÚËùÓĞµĞÈËID
-
-	//NPCÏà¹Ø
-	void addNPC(unsigned int npcId); //Ìí¼ÓNPC
-	bool removeNPC(unsigned int npcId); //ÒÆ³ıNPC
-	bool hasNPC(unsigned int npcId) const; //ÊÇ·ñÓĞ¸ÃNPC
-	const std::vector<unsigned int>& getNPCs() const; //»ñÈ¡·¿¼äÄÚËùÓĞNPC ID
-
-	// JSON ¶ÁĞ´£¬µ÷ÓÃÕßÎª¶ÔÏó¡£¾ÍÊÇ½«Ã¿¸öRoom¶ÔÏó×ª»»ÎªJSON¶ÔÏó
-	void toJson(json& j) const override;  //
-	void fromJson(const json& j) override;
-
-	std::vector<unsigned int> dropLoot() const; //µôÂäÎïÆ·IDÁĞ±í£¬À´×ÔÕ½¶·ÏµÍ³»÷°ÜµĞÈË NPCÈÎÎñ´¥·¢  »òÕßÉÌµê¹ºÂò
+    // ç”±äº unique_ptr çš„å­˜åœ¨ï¼ŒRoom ç±»æ˜¯ä¸å¯æ‹·è´çš„ã€‚
+    // æˆ‘ä»¬éœ€è¦è‡ªå·±å®ç°ä¸€ä¸ªâ€œæ·±æ‹·è´â€æˆ–â€œå…‹éš†â€æ–¹æ³•æ¥åˆ›å»ºå®ä¾‹ã€‚
+    Room(const Room& other); // æ‹·è´æ„é€ å‡½æ•°
+    Room& operator=(const Room& other); // æ‹·è´èµ‹å€¼è¿ç®—ç¬¦
 
 
+    // --- æ ¸å¿ƒæ–¹æ³• ---
 
-	~Room() override;
+    /**
+     * @brief æ˜¾ç¤ºæˆ¿é—´çš„æ‰€æœ‰ä¿¡æ¯ï¼ˆæè¿°ã€å‡ºå£ã€ç‰©å“ã€æ•Œäººï¼‰
+     */
+    void display() const;
 
-private:
-	std::vector<unsigned int> dropLootFromEnemies() const;
-	std::vector<unsigned int> dropLootFromNPCs() const;
+    /**
+     * @brief æ ¹æ®æ–¹å‘è·å–å‡ºå£æŒ‡å‘çš„æˆ¿é—´ID
+     * @param direction "north", "south", etc.
+     * @return æˆ¿é—´IDï¼Œå¦‚æœè¯¥æ–¹å‘æ²¡æœ‰å‡ºå£åˆ™è¿”å› -1
+     */
+    int getExit(const std::string& direction) const;
 
-	std::vector<unsigned int> dropLootFromStore() const;
+    // --- é‡å†™(override)åŸºç±»çš„è™šå‡½æ•° ---
+    virtual void fromJson(const json& j) override;
+    // toJson æˆ‘ä»¬æš‚æ—¶ç”¨ä¸åˆ°ï¼Œå¯ä»¥å…ˆä¸å®ç°
+    // virtual void toJson(json& j) const override;
 
-	std::vector<unsigned int> getLootFromEnemy(unsigned int enemyId) const;  //»ñÈ¡µĞÈËµôÂäÎïÆ·IDÁĞ±í
-	std::vector<unsigned int> getLootFromNPC(unsigned int npcId) const;  //»ñÈ¡NPCµôÂäÎïÆ·IDÁĞ±í
-
+    std::unique_ptr<Item> takeItem(const std::string& itemName);
 
 };
-

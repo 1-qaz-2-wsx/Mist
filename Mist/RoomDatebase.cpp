@@ -1,94 +1,73 @@
-#include "RoomDatabase.h"
-#include "Room.h"
-#include <fstream>
+ï»¿#include "RoomDatabase.h"
+#include "ItemDatabase.h"
+#include "EnemyDatabase.h"
 #include "json.hpp"
+#include <fstream>
+#include <iostream>
 
 using json = nlohmann::json;
 
-RoomDatabase::RoomDatabase() {}
-RoomDatabase::RoomDatabase(const std::string& filename) {
-	loadFromFile(filename);
+bool RoomDatabase::load(const std::string& filename, const ItemDatabase* itemDB, const EnemyDatabase* enemyDB) {
+    std::ifstream file(filename);
+    if (!file.is_open()) { /* ... error handling ... */ return false; }
+
+    json jsonData;
+    try {
+        file >> jsonData;
+    }
+    catch (const json::parse_error& e) { /* ... error handling ... */ return false; }
+
+    roomTemplates_.clear();
+
+    // éå†JSONæ•°ç»„ä¸­çš„æ¯ä¸ªæˆ¿é—´å¯¹è±¡
+    for (const auto& roomObject : jsonData) {
+        Room newRoomTemplate;
+        // 1. å…ˆè®© Room è‡ªå·±åŠ è½½åŸºæœ¬ä¿¡æ¯ (ID, name, description, exits)
+        newRoomTemplate.fromJson(roomObject);
+
+        // 2. RoomDatabase è´Ÿè´£å¤„ç†ä¾èµ–é¡¹ (items å’Œ enemies)
+        if (roomObject.contains("items")) {
+            for (const auto& itemId : roomObject["items"]) {
+                // å‘ ItemDatabase è¯·æ±‚åˆ›å»ºç‰©å“å®ä¾‹
+                auto itemInstance = itemDB->createInstance(itemId.get<unsigned int>());
+                if (itemInstance) {
+                    newRoomTemplate.items.push_back(std::move(itemInstance));
+                }
+            }
+        }
+
+        if (roomObject.contains("enemies")) {
+            for (const auto& enemyId : roomObject["enemies"]) {
+                // å‘ EnemyDatabase è¯·æ±‚åˆ›å»ºæ•Œäººå®ä¾‹
+                auto enemyInstance = enemyDB->createInstance(enemyId.get<unsigned int>());
+                if (enemyInstance) {
+                    newRoomTemplate.enemies.push_back(std::move(enemyInstance));
+                }
+            }
+        }
+
+        // 3. å°†æ„å»ºå®Œæˆçš„æ¨¡æ¿å­˜å…¥æ•°æ®åº“
+        roomTemplates_[newRoomTemplate.getId()] = std::move(newRoomTemplate);
+    }
+
+    std::cout << "Loaded " << roomTemplates_.size() << " rooms from " << filename << std::endl;
+    return true;
 }
 
-RoomDatabase::~RoomDatabase() {}
-
-//Ôö
-bool RoomDatabase::addRoom(const std::shared_ptr<Room>& room) {
-	if (rooms.find(room->getId()) != rooms.end()) {
-		return false; // IDÒÑ´æÔÚ
-	}
-	rooms[room->getId()] = room;
-	return true;
+std::unique_ptr<Room> RoomDatabase::createInstance(unsigned int roomId) const {
+    auto it = roomTemplates_.find(roomId);
+    if (it != roomTemplates_.end()) {
+        // ä½¿ç”¨æˆ‘ä»¬ä¹‹å‰å®ç°çš„æ‹·è´æ„é€ å‡½æ•°æ¥åˆ›å»ºä¸€ä¸ªæ·±æ‹·è´çš„å®ä¾‹
+        return std::make_unique<Room>(it->second);
+    }
+    return nullptr;
 }
 
-//É¾
-bool RoomDatabase::removeRoom(unsigned int roomId) {
-	auto it = rooms.find(roomId);
-	if (it == rooms.end()) {
-		return false; // ID²»´æÔÚ
-	}
-	rooms.erase(it);
-	return true;
+std::vector<unsigned int> RoomDatabase::getAllRoomIds() const {
+    std::vector<unsigned int> ids;
+    ids.reserve(roomTemplates_.size()); // æå‰é¢„ç•™ç©ºé—´ä»¥æé«˜æ•ˆç‡
+    for (const auto& pair : roomTemplates_) {
+        ids.push_back(pair.first); // pair.first æ˜¯ map ä¸­çš„ key (å³æˆ¿é—´ID)
+    }
+    return ids;
 }
-
-//²é 
-std::shared_ptr<Room> RoomDatabase::getRoom(unsigned int roomId) const {
-	auto it = rooms.find(roomId);
-	if (it == rooms.end()) {
-		return nullptr; // ID²»´æÔÚ
-	}
-	return it->second;
-}
-
-//¼ì²é
-bool RoomDatabase::hasRoom(unsigned int roomId) const {
-	return rooms.find(roomId) != rooms.end();
-}
-
-const std::map<unsigned int, std::shared_ptr<Room>>& RoomDatabase::getAllRooms() const {
-	return rooms;
-}
-
-// JSON ¶ÁĞ´
-bool RoomDatabase::loadFromFile(const std::string& filename) {
-	std::ifstream inFile(filename);
-	if (!inFile.is_open()) {
-		return false; // ÎÄ¼ş´ò¿ªÊ§°Ü
-	}
-
-	json j;
-	inFile >> j;
-	inFile.close();
-
-	if (!j.is_array()) {
-		return false; // JSON ¸ñÊ½´íÎó
-	}
-
-	rooms.clear();
-	for (const auto& item : j) {
-		auto room = std::make_shared<Room>();
-		room->fromJson(item);
-		rooms[room->getId()] = room;
-	}
-	return true;
-}
-
-bool RoomDatabase::saveToFile(const std::string& filename) const {
-	std::ofstream outFile(filename);
-	if (!outFile.is_open()) {
-		return false; // ÎÄ¼ş´ò¿ªÊ§°Ü
-	}
-
-	json j = json::array();  //´´½¨ JSON Êı×é£¬¼´ÒÔÊı×éĞÎÊ½´æ´¢·¿¼ä
-	for (const auto& [id, room] : rooms) {
-		json roomJson;
-		room->toJson(roomJson); //µ÷ÓÃ Room µÄ toJson ·½·¨£¬roomJson ´æ´¢¸Ã·¿¼äµÄ JSON Êı¾İ
-		j.push_back(roomJson);
-	}
-
-	outFile << j.dump(4); // ÃÀ»¯Êä³ö£¬Ëõ½ø4¸ö¿Õ¸ñ
-	outFile.close();
-	return true;
-}
-
-

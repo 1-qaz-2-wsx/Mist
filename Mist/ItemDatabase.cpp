@@ -1,9 +1,9 @@
-#include "ItemDatabase.h"
-#include "json.hpp" // °üº¬ÄãµÄJSON¿âÍ·ÎÄ¼ş
-#include <fstream>   // ÓÃÓÚÎÄ¼ş¶ÁĞ´
-#include <iostream>  // ÓÃÓÚÊä³ö´íÎóĞÅÏ¢
+ï»¿#include "ItemDatabase.h"
+#include "json.hpp" // åŒ…å«ä½ çš„JSONåº“å¤´æ–‡ä»¶
+#include <fstream>   // ç”¨äºæ–‡ä»¶è¯»å†™
+#include <iostream>  // ç”¨äºè¾“å‡ºé”™è¯¯ä¿¡æ¯
 
-// ÎªÁË·½±ãÊ¹ÓÃ£¬ÎÒÃÇÎªjson¿â´´½¨Ò»¸öÃüÃû¿Õ¼ä±ğÃû
+// ä¸ºäº†æ–¹ä¾¿ä½¿ç”¨ï¼Œæˆ‘ä»¬ä¸ºjsonåº“åˆ›å»ºä¸€ä¸ªå‘½åç©ºé—´åˆ«å
 using json = nlohmann::json;
 
 bool ItemDatabase::load(const std::string& filename) {
@@ -27,9 +27,9 @@ bool ItemDatabase::load(const std::string& filename) {
 
     for (const auto& itemObject : jsonData) {
         Item newItem;
-        newItem.fromJson(itemObject); // Ö±½ÓÈÃ Item ¶ÔÏó×Ô¼º´Ó JSON ¼ÓÔØ£¡
+        newItem.fromJson(itemObject); // ç›´æ¥è®© Item å¯¹è±¡è‡ªå·±ä» JSON åŠ è½½ï¼
 
-        // Ê¹ÓÃ´Ó item ÖĞ»ñÈ¡µÄ id ×÷Îª key
+        // ä½¿ç”¨ä» item ä¸­è·å–çš„ id ä½œä¸º key
         itemTemplates_[newItem.getId()] = newItem;
     }
 
@@ -38,14 +38,23 @@ bool ItemDatabase::load(const std::string& filename) {
 }
 
 const Item* ItemDatabase::getItemTemplate(unsigned int itemId) const {
-    // Ê¹ÓÃ.find()À´°²È«µØ²éÕÒÔªËØ
+    // ä½¿ç”¨.find()æ¥å®‰å…¨åœ°æŸ¥æ‰¾å…ƒç´ 
     auto it = itemTemplates_.find(itemId);
 
     if (it != itemTemplates_.end()) {
-        // Èç¹ûÕÒµ½ÁË£¬it->second ¾ÍÊÇÎÒÃÇÏëÒªµÄ Item ¶ÔÏó
+        // å¦‚æœæ‰¾åˆ°äº†ï¼Œit->second å°±æ˜¯æˆ‘ä»¬æƒ³è¦çš„ Item å¯¹è±¡
         return &(it->second);
     }
 
-    // Èç¹ûÃ»ÕÒµ½£¬·µ»Ø¿ÕÖ¸Õë
+    // å¦‚æœæ²¡æ‰¾åˆ°ï¼Œè¿”å›ç©ºæŒ‡é’ˆ
+    return nullptr;
+}
+
+// åœ¨ ItemDatabase.h/.cpp ä¸­æ·»åŠ :
+std::unique_ptr<Item> ItemDatabase::createInstance(unsigned int itemId) const {
+    const Item* itemTemplate = getItemTemplate(itemId);
+    if (itemTemplate) {
+        return std::make_unique<Item>(*itemTemplate);
+    }
     return nullptr;
 }

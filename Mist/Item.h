@@ -1,35 +1,35 @@
-#pragma once
+ï»¿#pragma once
 
-#include "Entity.h" // °üº¬»ùÀàÍ·ÎÄ¼ş
+#include "Entity.h" // åŒ…å«åŸºç±»å¤´æ–‡ä»¶
 #include <string>
 
-// Ê¹ÓÃÄãÒÑ¾­ÔÚ Entity.h ÖĞ¶¨ÒåµÄ json ±ğÃû
+// ä½¿ç”¨ä½ å·²ç»åœ¨ Entity.h ä¸­å®šä¹‰çš„ json åˆ«å
 using json = nlohmann::json;
 
 class Item : public Entity {
 public:
-    std::string description; // ÎïÆ·ÌØÓĞµÄÊôĞÔ
+    std::string description; // ç‰©å“ç‰¹æœ‰çš„å±æ€§
 
 public:
-    // Ä¬ÈÏ¹¹Ôìº¯Êı
+    // é»˜è®¤æ„é€ å‡½æ•°
     Item() = default;
 
-    // Ò»¸ö·½±ãµÄ¹¹Ôìº¯Êı
+    // ä¸€ä¸ªæ–¹ä¾¿çš„æ„é€ å‡½æ•°
     Item(unsigned int id, const std::string& name, const std::string& desc)
         : Entity(name, id), description(desc) {}
 
-    // --- ÖØĞ´(override)»ùÀàµÄĞéº¯Êı ---
-    // ÎÒÃÇ½«ÔÚÕâÀïÊµÏÖ¾ßÌåµÄJSON¼ÓÔØÂß¼­
+    // --- é‡å†™(override)åŸºç±»çš„è™šå‡½æ•° ---
+    // æˆ‘ä»¬å°†åœ¨è¿™é‡Œå®ç°å…·ä½“çš„JSONåŠ è½½é€»è¾‘
 
     /**
-     * @brief ´ÓJSON¶ÔÏó¼ÓÔØÊı¾İÀ´Ìî³äItem¶ÔÏóµÄ³ÉÔ±
-     * @param j nlohmann::json ¶ÔÏó
+     * @brief ä»JSONå¯¹è±¡åŠ è½½æ•°æ®æ¥å¡«å……Itemå¯¹è±¡çš„æˆå‘˜
+     * @param j nlohmann::json å¯¹è±¡
      */
     virtual void fromJson(const json& j) override;
 
     /**
-     * @brief ½«Item¶ÔÏóµÄÊı¾İ×ª»»(ĞòÁĞ»¯)ÎªJSON¶ÔÏó
-     * @param j nlohmann::json ¶ÔÏó
+     * @brief å°†Itemå¯¹è±¡çš„æ•°æ®è½¬æ¢(åºåˆ—åŒ–)ä¸ºJSONå¯¹è±¡
+     * @param j nlohmann::json å¯¹è±¡
      */
     virtual void toJson(json& j) const override;
 };

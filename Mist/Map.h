@@ -1,32 +1,38 @@
-#pragma once
-#include <map>
-#include <utility> // std::pair
+ï»¿#pragma once
 
-using Coord = std::pair<int, int>; //×ø±ê
+#include <unordered_map>
+#include <memory>
 
+// å‰å‘å£°æ˜
+class Room;
 class RoomDatabase;
 
-class Map//Ö»¸ºÔğ£º×ø±ê ¡ú ·¿¼äID µÄÓ³Éä¡¢µ±Ç°Î»ÖÃ¡¢ÒÆ¶¯¹æÔò¡£
-{
+class Map {
 private:
-	unsigned int currentRoomId_; //µ±Ç°·¿¼äID
-	RoomDatabase& db_;                       // ·ÇÓµÓĞÒıÓÃ
-	Coord player_{0,0}; //Íæ¼Ò×ø±ê
+    // åœ°å›¾æŒæœ‰æ¸¸æˆä¸–ç•Œä¸­æ‰€æœ‰æˆ¿é—´çš„â€œå®ä¾‹â€çš„æ‰€æœ‰æƒ
+    // é”®æ˜¯æˆ¿é—´IDï¼Œå€¼æ˜¯æŒ‡å‘Roomå®ä¾‹çš„æ™ºèƒ½æŒ‡é’ˆ
+    std::unordered_map<unsigned int, std::unique_ptr<Room>> rooms_;
 
-	std::map<Coord, unsigned int> positionToRoomId; //×ø±êµ½·¿¼äIDµÄÓ³Éä
+    unsigned int startingRoomId_ = 1; // ç©å®¶é»˜è®¤å‡ºç”Ÿæˆ¿é—´ID
 
 public:
-	Map(RoomDatabase& db);  //ÒÀÀµ×¢ÈëRoomDatabase
-	~Map();
+    Map() = default;
 
-	bool load(const std::string& filename); //´ÓÎÄ¼ş¼ÓÔØµØÍ¼
-	bool movePlayer(int x, int y);      // ÒÆ¶¯Íæ¼Ò£¬·µ»ØÊÇ·ñ³É¹¦
-	unsigned int getCurrentRoomId() const;
+    /**
+     * @brief æ ¹æ®RoomDatabaseä¸­çš„æ¨¡æ¿ï¼Œæ„å»ºæ•´ä¸ªåœ°å›¾çš„æˆ¿é—´å®ä¾‹
+     * @param roomDB æŒ‡å‘æˆ¿é—´æ•°æ®åº“çš„æŒ‡é’ˆ
+     */
+    void buildFromDatabase(RoomDatabase* roomDB);
 
-	// ²éÑ¯Ä³×ø±êµÄ·¿¼äID£¬²»´æÔÚÊ±·µ»Ø 0
-	unsigned int roomAt(int x, int y) const;
+    /**
+     * @brief é€šè¿‡IDè·å–ä¸€ä¸ªæŒ‡å‘æˆ¿é—´çš„æŒ‡é’ˆ
+     * @param roomId è¦è·å–çš„æˆ¿é—´ID
+     * @return æŒ‡å‘Roomçš„è£¸æŒ‡é’ˆï¼Œå¦‚æœæ‰¾ä¸åˆ°åˆ™ä¸ºnullptr
+     */
+    Room* getRoom(unsigned int roomId);
 
-	void printMap() const; //´òÓ¡µØÍ¼
-
+    /**
+     * @brief è·å–ç©å®¶çš„èµ·å§‹æˆ¿é—´ID
+     */
+    unsigned int getStartingRoomId() const;
 };
-

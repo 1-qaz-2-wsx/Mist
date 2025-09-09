@@ -1,64 +1,29 @@
-#include "Entity.h"
-#include "Entity.h"
+ï»¿#include "Entity.h"
 #include <iostream>
 #include <algorithm>
 #include <cctype>
 #include <string>
 
-using namespace std;
+// æ„é€ å‡½æ•°
+Entity::Entity() : name_(""), id_(0) {}
+Entity::Entity(const std::string& name, unsigned int id) : name_(name), id_(id) {}
 
-Entity::Entity() : name(""), id_(0) {}
-Entity::Entity(const string& name, unsigned int id) : name(name), id_(id) {}
-
-//·ÃÎÊÆ÷
-const string& Entity::getName() const { return name; }
+// è®¿é—®å™¨
+const std::string& Entity::getName() const { return name_; }
 
 unsigned int Entity::getId() const { return id_; }
 
-//·µ»ØĞ¡Ğ´Ãû³Æ
-string Entity::CompName() const
-{
-    string lower_name = name;
-    transform(lower_name.begin(), lower_name.end(), lower_name.begin(),
-        [](unsigned char c) { return tolower(c); });
-    return lower_name;
-}
-
-//ÍêÈ«Æ¥Åä
-bool Entity::FullMatch(const std::string& name) const {
-    return CompName() == name;
-}
-
-//²¿·ÖÆ¥Åä
-bool Entity::Match(const std::string& search) const {
-    std::string name_ = CompName();     // µ±Ç°¶ÔÏóµÄÃû×Ö£¨Ğ¡Ğ´£©
-
-    // ×ª³ÉĞ¡Ğ´£¨±ÜÃâ´óĞ¡Ğ´¸ÉÈÅ£©
-    std::transform(search.begin(), search.end(), search.begin(),
-        [](unsigned char c) { return std::tolower(c); });
-
-    size_t pos = name_.find(search);     // ²éÕÒ×Ó´®
-
-    while (pos != std::string::npos) {
-        // Æ¥Åä±ØĞëÔÚ¿ªÍ·£¬»òÊÇÒ»¸öµ¥´Ê±ß½ç£¨Ç°Ò»¸ö×Ö·ûÊÇ¿Õ¸ñ£©
-        if (pos == 0 || name_[pos - 1] == ' ')
-            return true;
-        pos = name_.find(search, pos + 1);   // ¼ÌĞø²éÕÒÏÂÒ»¸ö
-    }
-    return false;
-}
-
-// JSON ¶ÁĞ´
+// JSON è¯»å†™
 void Entity::toJson(json& j) const {
 	j = json{
-		{"name", name},
+		{"name", name_},
 		{"id", id_}
 	};
 }
 
 void Entity::fromJson(const json& j) {
 	if (j.contains("name") && j["name"].is_string()) {
-		name = j["name"];
+		name_ = j["name"];
 	}
 	if (j.contains("id") && j["id"].is_number_unsigned()) {
 		id_ = j["id"];

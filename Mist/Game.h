@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include <memory>
 #include <string>
 #include <vector>
 
-//ÖĞ½éÕß£¬¸ºÔğÀàÓëÀàÖ®¼äµÄÍ¨ĞÅ¡£ÈÎÎñÊÇ³õÊ¼»¯×ÓÏµÍ³²¢¹ÜÀíÓÎÏ·Ñ­»·¡£
-//Ç°ÏòÉùÃ÷£¬±ÜÃâÑ­»·ÒıÓÃ
+//ä¸­ä»‹è€…ï¼Œè´Ÿè´£ç±»ä¸ç±»ä¹‹é—´çš„é€šä¿¡ã€‚ä»»åŠ¡æ˜¯åˆå§‹åŒ–å­ç³»ç»Ÿå¹¶ç®¡ç†æ¸¸æˆå¾ªç¯ã€‚
+//å‰å‘å£°æ˜ï¼Œé¿å…å¾ªç¯å¼•ç”¨
 class Player;
 class Map;
 class BattleSystem;
@@ -17,32 +17,32 @@ class Game
 {
 
 public:
-	// --- ¹¹Ôì/Îö¹¹º¯ÊıÓëÉúÃüÖÜÆÚ¹ÜÀí ---
+	// --- æ„é€ /ææ„å‡½æ•°ä¸ç”Ÿå‘½å‘¨æœŸç®¡ç† ---
 	Game();
 	~Game();
 
-	// ½ûÖ¹¿½±´ºÍ¸³Öµ£¬ÒòÎªGameÊÇµ¥Àı×ÊÔ´¹ÜÀíÕß
+	// ç¦æ­¢æ‹·è´å’Œèµ‹å€¼ï¼Œå› ä¸ºGameæ˜¯å•ä¾‹èµ„æºç®¡ç†è€…
 	Game(const Game&) = delete;
 	Game& operator=(const Game&) = delete;
 
-	// --- ÓÎÏ·Ö÷Á÷³Ì¿ØÖÆ ---
+	// --- æ¸¸æˆä¸»æµç¨‹æ§åˆ¶ ---
 
-	// ³õÊ¼»¯ËùÓĞÓÎÏ·Êı¾İºÍ×ÓÏµÍ³
+	// åˆå§‹åŒ–æ‰€æœ‰æ¸¸æˆæ•°æ®å’Œå­ç³»ç»Ÿ
 	bool initialize(const std::string& dataFolderPath);
 
-	// Æô¶¯²¢ÔËĞĞÓÎÏ·Ö÷Ñ­»·
+	// å¯åŠ¨å¹¶è¿è¡Œæ¸¸æˆä¸»å¾ªç¯
 	void run();
 
 public:
 	// ----------------------------------------------------------------
-	// ÖĞ½éÕß½Ó¿Ú (Mediator Interface)
+	// ä¸­ä»‹è€…æ¥å£ (Mediator Interface)
 	// ----------------------------------------------------------------
-	// ÕâĞ©º¯ÊıÊÇ¸ø¡°Í¬ÊÂÀà¡±(ÈçPlayer, BattleSystem)µ÷ÓÃµÄ£¬ÓÃÓÚÏòÖĞ½éÕß±¨¸æÊÂ¼ş»òÇëÇó·şÎñ¡£
+	// è¿™äº›å‡½æ•°æ˜¯ç»™â€œåŒäº‹ç±»â€(å¦‚Player, BattleSystem)è°ƒç”¨çš„ï¼Œç”¨äºå‘ä¸­ä»‹è€…æŠ¥å‘Šäº‹ä»¶æˆ–è¯·æ±‚æœåŠ¡ã€‚
 
 	/**
-	 * @brief µ±Ò»³¡Õ½¶·½áÊøÊ±£¬ÓÉBattleSystemµ÷ÓÃ´Ëº¯Êı
-	 * @param playerWon Íæ¼ÒÊÇ·ñÊ¤Àû
-	 * @param lootItemIds Õ½ÀûÆ·ÎïÆ·µÄIDÁĞ±í
+	 * @brief å½“ä¸€åœºæˆ˜æ–—ç»“æŸæ—¶ï¼Œç”±BattleSystemè°ƒç”¨æ­¤å‡½æ•°
+	 * @param playerWon ç©å®¶æ˜¯å¦èƒœåˆ©
+	 * @param lootItemIds æˆ˜åˆ©å“ç‰©å“çš„IDåˆ—è¡¨
 	 */
 	void notifyBattleFinished(bool playerWon, const std::vector<unsigned int>& lootItemIds);
 
@@ -50,23 +50,23 @@ public:
 
 private:
     // ----------------------------------------------------------------
-    // ÄÚ²¿Âß¼­ÓëÁ÷³Ì´¦Àí (Private Helper Methods)
+    // å†…éƒ¨é€»è¾‘ä¸æµç¨‹å¤„ç† (Private Helper Methods)
     // ----------------------------------------------------------------
-    // ÕâĞ©ÊÇGameÀàÄÚ²¿ÓÃÀ´´¦ÀíÓÎÏ·Âß¼­µÄË½ÓĞº¯Êı¡£
+    // è¿™äº›æ˜¯Gameç±»å†…éƒ¨ç”¨æ¥å¤„ç†æ¸¸æˆé€»è¾‘çš„ç§æœ‰å‡½æ•°ã€‚
 
-    // ÓÎÏ·Ö÷Ñ­»·£¬ÓÉ run() µ÷ÓÃ
+    // æ¸¸æˆä¸»å¾ªç¯ï¼Œç”± run() è°ƒç”¨
     void gameLoop();
 
-    // ´¦ÀíÍæ¼ÒµÄÊäÈë
+    // å¤„ç†ç©å®¶çš„è¾“å…¥
     void processPlayerInput();
 
-    // ÏÔÊ¾µ±Ç°·¿¼äµÄĞÅÏ¢
+    // æ˜¾ç¤ºå½“å‰æˆ¿é—´çš„ä¿¡æ¯
     void displayCurrentState() const;
 
-    // ÇĞ»»Íæ¼ÒËùÔÚµÄ·¿¼ä£¬²¢´¥·¢½øÈë·¿¼äµÄÂß¼­
+    // åˆ‡æ¢ç©å®¶æ‰€åœ¨çš„æˆ¿é—´ï¼Œå¹¶è§¦å‘è¿›å…¥æˆ¿é—´çš„é€»è¾‘
     void enterRoom(unsigned int newRoomId);
 
-    // --- Íæ¼ÒÖ¸Áî´¦Àíº¯Êı ---
+    // --- ç©å®¶æŒ‡ä»¤å¤„ç†å‡½æ•° ---
     void handleMoveCommand(const std::string& direction);
     void handleLookCommand() const;
     void handleAttackCommand(const std::string& targetName);
@@ -75,36 +75,34 @@ private:
     void handleHelpCommand() const;
     void handleQuitCommand();
 
-    // --- ÄÚ²¿ÊÂ¼ş´¦Àí ---
+    // --- å†…éƒ¨äº‹ä»¶å¤„ç† ---
 
-    // ÔÚ½øÈëÒ»¸öĞÂ·¿¼äºó£¬¼ì²éÊÇ·ñÓĞµĞÈË²¢´¥·¢Õ½¶·
+    // åœ¨è¿›å…¥ä¸€ä¸ªæ–°æˆ¿é—´åï¼Œæ£€æŸ¥æ˜¯å¦æœ‰æ•Œäººå¹¶è§¦å‘æˆ˜æ–—
     void checkForEnemiesAndInitiateBattle();
 
-    // ´¦ÀíÕ½¶·½áÊøºóµÄ¸÷ÖÖÊÂÒË£¨ÈçÒÆ³ıµĞÈË¡¢µôÂäÎïÆ·£©
+    // å¤„ç†æˆ˜æ–—ç»“æŸåçš„å„ç§äº‹å®œï¼ˆå¦‚ç§»é™¤æ•Œäººã€æ‰è½ç‰©å“ï¼‰
     void processBattleAftermath(bool playerWon, const std::vector<unsigned int>& lootItemIds);
 
 
 private:
     // ----------------------------------------------------------------
-    // ³ÉÔ±±äÁ¿ (Member Variables)
+    // æˆå‘˜å˜é‡ (Member Variables)
     // ----------------------------------------------------------------
-    // ÖĞ½éÕß³ÖÓĞËùÓĞ×ÓÏµÍ³µÄËùÓĞÈ¨¡£Ê¹ÓÃunique_ptr¿ÉÒÔ×Ô¶¯¹ÜÀíÄÚ´æ¡£
+    // ä¸­ä»‹è€…æŒæœ‰æ‰€æœ‰å­ç³»ç»Ÿçš„æ‰€æœ‰æƒã€‚ä½¿ç”¨unique_ptrå¯ä»¥è‡ªåŠ¨ç®¡ç†å†…å­˜ã€‚
 
-    // --- ºËĞÄÓÎÏ·¶ÔÏó ---
+    // --- æ ¸å¿ƒæ¸¸æˆå¯¹è±¡ ---
     std::unique_ptr<Player> player_;
     std::unique_ptr<Map> map_;
 
-    // --- ÓÎÏ·×ÓÏµÍ³ ---
+    // --- æ¸¸æˆå­ç³»ç»Ÿ ---
     std::unique_ptr<BattleSystem> battleSystem_;
 
-    // --- Êı¾İ¹ÜÀíÆ÷ ---
+    // --- æ•°æ®ç®¡ç†å™¨ ---
     std::unique_ptr<ItemDatabase> itemDB_;
     std::unique_ptr<EnemyDatabase> enemyDB_;
     std::unique_ptr<RoomDatabase> roomDB_;
 
-    // --- ÓÎÏ·×´Ì¬ ---
-    bool isRunning_ = false; // ¿ØÖÆÓÎÏ·Ö÷Ñ­»·ÊÇ·ñ¼ÌĞø
+    // --- æ¸¸æˆçŠ¶æ€ ---
+    bool isRunning_ = false; // æ§åˆ¶æ¸¸æˆä¸»å¾ªç¯æ˜¯å¦ç»§ç»­
 };
-};
-
 

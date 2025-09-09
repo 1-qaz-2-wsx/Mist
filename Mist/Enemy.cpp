@@ -1,32 +1,49 @@
-#include "Enemy.h"
-
+ï»¿#include "Enemy.h"
+#include <iostream>
 void Enemy::fromJson(const json& j) {
-    // 1. µ÷ÓÃ»ùÀàº¯Êı¼ÓÔØ id ºÍ name
+    // 1. è°ƒç”¨åŸºç±»å‡½æ•°åŠ è½½ id å’Œ name
     Entity::fromJson(j);
 
-    // 2. ¼ÓÔØ Stats
+    // 2. åŠ è½½ Stats
     if (j.contains("stats")) {
         baseStats.fromJson(j.at("stats"));
     }
 
-    // 3. ¼ÓÔØÕ½ÀûÆ·ÁĞ±í
+    // 3. åŠ è½½æˆ˜åˆ©å“åˆ—è¡¨
     if (j.contains("lootTable")) {
         lootTable = j.at("lootTable").get<std::vector<unsigned int>>();
     }
 
-    // 4. ³õÊ¼»¯µ±Ç°ÉúÃüÖµ
+    // 4. åˆå§‹åŒ–å½“å‰ç”Ÿå‘½å€¼
     resetHealth();
 }
 
 void Enemy::toJson(json& j) const {
-    // 1. µ÷ÓÃ»ùÀàº¯ÊıĞòÁĞ»¯ id ºÍ name
+    // 1. è°ƒç”¨åŸºç±»å‡½æ•°åºåˆ—åŒ– id å’Œ name
     Entity::toJson(j);
 
-    // 2. ĞòÁĞ»¯ Stats
+    // 2. åºåˆ—åŒ– Stats
     json statsJson;
     baseStats.toJson(statsJson);
     j["stats"] = statsJson;
 
-    // 3. ĞòÁĞ»¯Õ½ÀûÆ·ÁĞ±í
+    // 3. åºåˆ—åŒ–æˆ˜åˆ©å“åˆ—è¡¨
     j["lootTable"] = lootTable;
+}
+
+
+void Enemy::takeDamage(int damageAmount) {
+    int actualDamage = damageAmount - baseStats.defense;
+    if (actualDamage < 1) actualDamage = 1;
+
+    currentHp -= actualDamage;
+    std::cout << getName() << " å—åˆ°äº† " << actualDamage << " ç‚¹ä¼¤å®³ã€‚" << std::endl;
+
+    if (!isAlive()) {
+        std::cout << getName() << " è¢«å‡»è´¥äº†ï¼" << std::endl;
+    }
+}
+
+bool Enemy::isAlive() const {
+    return currentHp > 0;
 }

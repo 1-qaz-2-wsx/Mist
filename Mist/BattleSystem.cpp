@@ -1,32 +1,90 @@
-#include "BattleSystem.h"
+ï»¿#include "BattleSystem.h"
 #include "Player.h"
-#include "Room.h"
-
-
+#include "Enemy.h"
+#include "Game.h"
 #include <iostream>
+#include <thread>   // ç”¨äº std::this_thread::sleep_for
+#include <chrono>   // ç”¨äº std::chrono::seconds
 
-std::vector<unsigned> BattleSystem::fight(Player& player, Room& room) {
-    std::vector<unsigned> totalLoot;
+void BattleSystem::startBattle(Player* player, Enemy* enemy) {
+    player_ = player;
+    enemy_ = enemy;
+    inBattle_ = true;
 
-    auto enemies = room.getEnemys(); // ÕâÀïÖ»ÄÃ ID£¨×î±¡ÒÀÀµ£©
+    std::cout << "\n================================" << std::endl;
+    std::cout << "æˆ˜æ–—å¼€å§‹ï¼ ä½ é­é‡äº† " << enemy_->getName() << "ï¼" << std::endl;
+    std::cout << "================================" << std::endl;
 
-    for (auto enemyId : enemies) {
-        // === ÕâÀïÍ¨³£Òª´Ó EnemyDatabase È¡µĞÈËÔ­ĞÍ£¬ÕâÀï¼ò»¯ÑİÊ¾ ===
-        Enemy e("Slime", enemyId, /*hp*/30, /*atk*/5, /*drops*/{ 101 });
+    // ç›´æ¥åœ¨æ­¤å¤„å¯åŠ¨å¹¶å®Œæˆæ•´ä¸ªæˆ˜æ–—å¾ªç¯
+    battleLoop();
+}
 
-        std::cout << "ÔâÓöµĞÈË#" << e.getId() << " [" << e.getName() << "]\n";
-        while (!e.isDead() && !player.isDead()) {
-            e.takeDamage(player.atk());
-            if (!e.isDead()) player.takeDamage(e.atk());
-        }
-        if (player.isDead()) {
-            std::cout << "Äãµ¹ÏÂÁË¡­¡­\n";
+void BattleSystem::battleLoop() {
+    while (inBattle_) {
+        displayStatus();
+
+        playerTurn();
+        if (!enemy_->isAlive()) {
+            inBattle_ = false;
             break;
         }
-        std::cout << "»÷°ÜµĞÈË#" << e.getId() << "\n";
-        totalLoot.insert(totalLoot.end(), e.drops().begin(), e.drops().end());
-        // ÊÇ·ñ´Ó·¿¼äÖĞÒÆ³ı¸ÃµĞÈËÓÉÖĞ½éÕß/»ò Room ×ÔÉíÌá¹© remove ½Ó¿Ú´¦Àí
+
+        // ç»™ç©å®¶ä¸€ç‚¹ååº”æ—¶é—´
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+
+        enemyTurn();
+        if (!player_->isAlive()) {
+            inBattle_ = false;
+            break;
+        }
+
+        std::cout << "--------------------------------" << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
-    return totalLoot;
+    // å¾ªç¯ç»“æŸåï¼Œå¤„ç†æˆ˜æ–—ç»“æœ
+    endBattle();
+}
+
+void BattleSystem::playerTurn() {
+    std::cout << "\nä½ çš„å›åˆã€‚ç›®å‰ä½ åªèƒ½é€‰æ‹©æ”»å‡»ã€‚\næŒ‰ Enter é”®æ”»å‡»...";
+    // ç­‰å¾…ç©å®¶æŒ‰å›è½¦ï¼Œç®€åŒ–è¾“å…¥å¤„ç†
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    std::cout << "ä½ å‘èµ·äº†æ”»å‡»ï¼" << std::endl;
+    enemy_->takeDamage(player_->stats.attack);
+}
+
+void BattleSystem::enemyTurn() {
+    std::cout << "\n" << enemy_->getName() << " çš„å›åˆã€‚" << std::endl;
+    std::cout << enemy_->getName() << " æ”»å‡»äº†ä½ ï¼" << std::endl;
+    player_->takeDamage(enemy_->baseStats.attack);
+}
+
+void BattleSystem::displayStatus() const {
+    std::cout << "\n[çŠ¶æ€] "
+        << player_->getName() << " HP: " << player_->currentHp << "/" << player_->stats.maxHp
+        << "  |  "
+        << enemy_->getName() << " HP: " << enemy_->currentHp << "/" << enemy_->baseStats.maxHp
+        << std::endl;
+}
+
+void BattleSystem::endBattle() {
+    bool playerWon = player_->isAlive();
+
+    // [ä¸­ä»‹è€…æ¨¡å¼]
+    // æˆ˜æ–—ç³»ç»Ÿä¸å…³å¿ƒæˆ˜åˆ©å“æ˜¯ä»€ä¹ˆï¼Œå®ƒåªç®¡æŠŠæˆ˜åˆ©å“IDåˆ—è¡¨å’Œæˆ˜æ–—ç»“æœæŠ¥å‘Šç»™Game
+    if (mediator_) {
+        if (playerWon) {
+            mediator_->notifyBattleFinished(true, enemy_->lootTable);
+        }
+        else {
+            // å¦‚æœç©å®¶è¾“äº†ï¼Œ lootTable ä¸ºç©º
+            mediator_->notifyBattleFinished(false, {});
+        }
+    }
+
+    // æ¸…ç†æˆ˜åœºæŒ‡é’ˆ
+    player_ = nullptr;
+    enemy_ = nullptr;
 }

@@ -1,27 +1,30 @@
-#pragma once
+ï»¿#pragma once
 
 #include <string>
 #include <unordered_map>
-#include "Item.h" // °üº¬ÎïÆ·µÄ¶¨Òå
+#include "Item.h" // åŒ…å«ç‰©å“çš„å®šä¹‰
 
 class ItemDatabase {
 public:
     /**
-     * @brief ´ÓÖ¸¶¨µÄJSONÎÄ¼ş¼ÓÔØËùÓĞÎïÆ·Ä£°å
-     * @param filename JSONÎÄ¼şµÄÂ·¾¶
-     * @return Èç¹û¼ÓÔØ³É¹¦·µ»Ø true, ·ñÔò·µ»Ø false
+     * @brief ä»æŒ‡å®šçš„JSONæ–‡ä»¶åŠ è½½æ‰€æœ‰ç‰©å“æ¨¡æ¿
+     * @param filename JSONæ–‡ä»¶çš„è·¯å¾„
+     * @return å¦‚æœåŠ è½½æˆåŠŸè¿”å› true, å¦åˆ™è¿”å› false
      */
     bool load(const std::string& filename);
 
     /**
-     * @brief ¸ù¾İÎïÆ·ID»ñÈ¡Ò»¸öÖ¸ÏòÎïÆ·Ä£°åµÄ³£Á¿Ö¸Õë
-     * @param itemId ÎïÆ·µÄÎ¨Ò»ID
-     * @return Èç¹ûÕÒµ½Ôò·µ»ØÎïÆ·Ä£°åÖ¸Õë£¬·ñÔò·µ»Ø nullptr
+     * @brief æ ¹æ®ç‰©å“IDè·å–ä¸€ä¸ªæŒ‡å‘ç‰©å“æ¨¡æ¿çš„å¸¸é‡æŒ‡é’ˆ
+     * @param itemId ç‰©å“çš„å”¯ä¸€ID
+     * @return å¦‚æœæ‰¾åˆ°åˆ™è¿”å›ç‰©å“æ¨¡æ¿æŒ‡é’ˆï¼Œå¦åˆ™è¿”å› nullptr
      */
     const Item* getItemTemplate(unsigned int itemId) const;
 
+    // åœ¨ ItemDatabase.h/.cpp ä¸­æ·»åŠ :
+    std::unique_ptr<Item> createInstance(unsigned int itemId) const;
+
 private:
-    // Ê¹ÓÃ¹şÏ£±í(unordered_map)À´´æ´¢ÎïÆ·Ä£°å£¬Í¨¹ıID¿ÉÒÔ¿ìËÙ²éÕÒ
-    // ¼üÊÇ ÎïÆ·ID(unsigned int)£¬ÖµÊÇ ÎïÆ·¶ÔÏó(Item)
+    // ä½¿ç”¨å“ˆå¸Œè¡¨(unordered_map)æ¥å­˜å‚¨ç‰©å“æ¨¡æ¿ï¼Œé€šè¿‡IDå¯ä»¥å¿«é€ŸæŸ¥æ‰¾
+    // é”®æ˜¯ ç‰©å“ID(unsigned int)ï¼Œå€¼æ˜¯ ç‰©å“å¯¹è±¡(Item)
     std::unordered_map<unsigned int, Item> itemTemplates_;
 };

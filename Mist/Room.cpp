@@ -1,267 +1,103 @@
-#include "Room.h"
-#include <algorithm>
-#include <fstream>
-#include <string>
+ï»¿#include "Room.h"
+#include "Enemy.h" // åœ¨.cppä¸­åŒ…å«å®Œæ•´å®šä¹‰
+#include "Item.h"  // åœ¨.cppä¸­åŒ…å«å®Œæ•´å®šä¹‰
 #include <iostream>
-//¹¹Ôìº¯Êı
-Room::Room() : Entity(), type(DEFAULT), des("A nondescript room.") {}
-Room::Room(const std::string& name, unsigned int id, RoomType type, const std::string& des)
-	: Entity(name, id), type(type), des(des) {}
 
-//·ÃÎÊÆ÷
-RoomType Room::getType() const {
-	return type;
-}
-
-const std::string& Room::getDes() const {
-	return des;
-}
-
-//ĞŞ¸ÄÆ÷
-void Room::setType(RoomType type) {
-	this->type = type;
+// å®ç°æ‹·è´æ„é€ å‡½æ•°ï¼Œç”¨äºåˆ›å»ºæˆ¿é—´çš„â€œå®ä¾‹â€
+Room::Room(const Room& other) : Entity(other) {
+    this->description = other.description;
+    this->exits = other.exits;
+    // å…³é”®ï¼šä¸º unique_ptr åˆ›å»ºæ·±æ‹·è´
+    for (const auto& enemy : other.enemies) {
+        this->enemies.push_back(std::make_unique<Enemy>(*enemy));
+    }
+    for (const auto& item : other.items) {
+        this->items.push_back(std::make_unique<Item>(*item));
+    }
 }
 
-void Room::setDes(const std::string& des) {
-	this->des = des;
+// å®ç°æ‹·è´èµ‹å€¼è¿ç®—ç¬¦
+Room& Room::operator=(const Room& other) {
+    if (this == &other) {
+        return *this;
+    }
+    Entity::operator=(other);
+    this->description = other.description;
+    this->exits = other.exits;
+    this->enemies.clear();
+    this->items.clear();
+    for (const auto& enemy : other.enemies) {
+        this->enemies.push_back(std::make_unique<Enemy>(*enemy));
+    }
+    for (const auto& item : other.items) {
+        this->items.push_back(std::make_unique<Item>(*item));
+    }
+    return *this;
 }
 
-//³ö¿ÚÏà¹Ø
-void Room::addExit(DIRECTION dir, unsigned int roomId) {
-	exits[dir] = roomId;
-}
-const std::map<DIRECTION, unsigned int>& Room::getExits() const {
-	return exits;
+
+void Room::display() const {
+    // 1. æ˜¾ç¤ºæˆ¿é—´åå’Œæè¿°
+    std::cout << "--- " << name_ << " ---" << std::endl;
+    std::cout << description << std::endl;
+
+    // 2. æ˜¾ç¤ºåœ°ä¸Šçš„ç‰©å“
+    if (!items.empty()) {
+        std::cout << "\n[åœ°ä¸Šæœ‰]: ";
+        for (const auto& item : items) {
+            std::cout << item->getName() << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    // 3. æ˜¾ç¤ºæˆ¿é—´é‡Œçš„æ•Œäºº
+    if (!enemies.empty()) {
+        std::cout << "\n[æ•Œäºº]: ";
+        for (const auto& enemy : enemies) {
+            std::cout << enemy->getName() << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    // 4. æ˜¾ç¤ºå‡ºå£
+    std::cout << "\n[å‡ºå£]: ";
+    if (exits.empty()) {
+        std::cout << "æ— ";
+    }
+    else {
+        for (const auto& pair : exits) {
+            std::cout << pair.first << " "; // pair.first æ˜¯æ–¹å‘
+        }
+    }
+    std::cout << std::endl;
 }
 
-bool Room::removeExit(DIRECTION dir) {
-	return exits.erase(dir) > 0;
-}
-bool Room::hasExit(DIRECTION dir) const {
-	return exits.find(dir) != exits.end();
-}
-unsigned int Room::getExit(DIRECTION dir) const {
-	auto it = exits.find(dir);
-	if (it != exits.end()) {
-		return it->second;
-	}
-	return 0; //ÈôÎŞ¸Ã·½Ïò·µ»Ø0
-}
-
-//ÎïÆ·Ïà¹Ø
-void Room::addItem(unsigned int itemId) {
-	items.push_back(itemId);
-}
-bool Room::removeItem(unsigned int itemId) {
-	auto it = std::find(items.begin(), items.end(), itemId);
-	if (it != items.end()) {
-		items.erase(it);
-		return true;
-	}
-	return false;
-}
-const std::vector<unsigned int>& Room::getItems() const {
-	return items;
-}
-bool Room::hasItem(unsigned int itemId) const {
-	return std::find(items.begin(), items.end(), itemId) != items.end();
-}
-
-//µĞÈËÏà¹Ø
-void Room::addEnemy(unsigned int enemyId) {
-	enemys.push_back(enemyId);
-}
-bool Room::removeEnemy(unsigned int enemyId) {
-	auto it = std::find(enemys.begin(), enemys.end(), enemyId);
-	if (it != enemys.end()) {
-		enemys.erase(it);
-		return true;
-	}
-	return false;
-}
-const std::vector<unsigned int>& Room::getEnemys() const {
-	return enemys;
-}
-bool Room::hasEnemy(unsigned int enemyId) const {
-	return std::find(enemys.begin(), enemys.end(), enemyId) != enemys.end();
-}
-
-//NPCÏà¹Ø
-void Room::addNPC(unsigned int npcId) {
-	npcs.push_back(npcId);
-}
-bool Room::removeNPC(unsigned int npcId) {
-	auto it = std::find(npcs.begin(), npcs.end(), npcId);
-	if (it != npcs.end()) {
-		npcs.erase(it);
-		return true;
-	}
-	return false;
-}
-const std::vector<unsigned int>& Room::getNPCs() const {
-	return npcs;
-}
-bool Room::hasNPC(unsigned int npcId) const {
-	return std::find(npcs.begin(), npcs.end(), npcId) != npcs.end();
-}
-
-Room::~Room() {}
-
-
-// JSON ¶ÁĞ´
-void Room::toJson(json& j) const {
-	Entity::toJson(j); //µ÷ÓÃ»ùÀàµÄtoJson£¬ÏÈĞ´name ºÍid
-	// ·¿¼äÌØÓĞÊôĞÔ
-	j["type"] = static_cast<int>(type);
-	j["description"] = des;
-
-	// ³ö¿Ú
-	j["exits"] = json::object();
-	for (const auto& [dir, roomId] : exits) {
-		j["exits"][std::to_string(static_cast<int>(dir))] = roomId;
-	}
-
-	// ÎïÆ·
-	j["items"] = items;
-
-	// µĞÈË
-	j["enemys"] = enemys;
-
-	// NPC
-	j["npcs"] = npcs;
+int Room::getExit(const std::string& direction) const {
+    auto it = exits.find(direction);
+    if (it != exits.end()) {
+        return it->second; // it->second æ˜¯æˆ¿é—´ID
+    }
+    return -1; // -1 è¡¨ç¤ºæœªæ‰¾åˆ°
 }
 
 void Room::fromJson(const json& j) {
-	Entity::fromJson(j); //µ÷ÓÃ»ùÀàµÄfromJson£¬ÏÈ¶Áname ºÍid
+    // Room::fromJson åªè´Ÿè´£åŠ è½½å®ƒè‡ªå·±çš„ç›´æ¥æ•°æ®
+    Entity::fromJson(j);
+    description = j.at("description").get<std::string>();
 
-	// ·¿¼äÌØÓĞÊôĞÔ
-	if (j.contains("type") && j["type"].is_number_integer()) {
-		type = static_cast<RoomType>(j["type"].get<int>());
-	}
-	if (j.contains("description") && j["description"].is_string()) {
-		des = j["description"].get<std::string>();
-	}
-
-	// ³ö¿Ú
-	exits.clear(); //ÏÈÇå¿ÕÏÖÓĞ³ö¿Ú£¬±ÜÃâÊı¾İ²ĞÁô
-	if (j.contains("exits") && j["exits"].is_object()) {
-		for (auto& [key, value] : j["exits"].items()) {
-			if (value.is_number_unsigned()) {
-				DIRECTION dir = static_cast<DIRECTION>(std::stoi(key));
-				exits[dir] = value.get<unsigned int>();
-			}
-		}
-	}
-
-	// ÎïÆ·
-	items.clear();
-	if (j.contains("items") && j["items"].is_array()) {
-		for (const auto& item : j["items"]) {
-			if (item.is_number_unsigned()) {
-				items.push_back(item.get<unsigned int>());
-			}
-		}
-	}
-
-	// µĞÈË
-	enemys.clear();
-	if (j.contains("enemys") && j["enemys"].is_array()) {
-		for (const auto& enemy : j["enemys"]) {
-			if (enemy.is_number_unsigned()) {
-				enemys.push_back(enemy.get<unsigned int>());
-			}
-		}
-	}
-
-	// NPC
-	npcs.clear();
-	if (j.contains("npcs") && j["npcs"].is_array()) {
-		for (const auto& npc : j["npcs"]) {
-			if (npc.is_number_unsigned()) {
-				npcs.push_back(npc.get<unsigned int>());
-			}
-		}
-	}
+    // åŠ è½½å‡ºå£ä¿¡æ¯
+    if (j.contains("exits")) {
+        exits = j.at("exits").get<std::map<std::string, unsigned int>>();
+    }
 }
 
-std::vector<unsigned int> Room::dropLoot() const {
-	// Íâ²¿º¯Êı¸ù¾İµĞÈËID»ñÈ¡µôÂäÎïÆ·IDÁĞ±í
-	std::vector<unsigned int> loot;
-
-	// ¸ù¾İ·¿¼äÀàĞÍÅĞ¶ÏÊÇµĞÈËµôÂä¡¢NPCµôÂä£¬»¹ÊÇÉÌµêÎïÆ·
-	if (type == RoomType::FIGHT) {
-		// Èç¹û·¿¼äÀàĞÍÊÇÕ½¶·£¨FIGHT£©£¬µĞÈËµôÂäÎïÆ·
-		loot = dropLootFromEnemies();
-	}
-	else if (type == RoomType::ENCOUNTER) {
-		// Èç¹û·¿¼äÀàĞÍÊÇÅ¼Óö£¨ENCOUNTER£©£¬NPCµôÂäÎïÆ·
-		loot = dropLootFromNPCs();
-	}
-	else if (type == RoomType::STORE) {
-		// ÉÌµêÀàĞÍµÄ·¿¼äÍ¨³£²»µôÂäÎïÆ·£¬¶øÊÇÍæ¼Ò¿ÉÒÔ¹ºÂò
-		loot = dropLootFromStore();
-	}
-
-	return loot;
-}
-
-std::vector<unsigned int> Room::dropLootFromEnemies() const {
-	std::vector<unsigned int> loot;
-	for (auto& enemyId : enemys) {
-		auto lootForEnemy = getLootFromEnemy(enemyId);
-		loot.insert(loot.end(), lootForEnemy.begin(), lootForEnemy.end());
-	}
-	return loot;
-}
-
-std::vector<unsigned int> Room::dropLootFromNPCs() const {
-	std::vector<unsigned int> loot;
-	for (auto& npcId : npcs) {
-		auto lootForNPC = getLootFromNPC(npcId);
-		loot.insert(loot.end(), lootForNPC.begin(), lootForNPC.end());
-	}
-	return loot;
-}
-
-
-//¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£
-std::vector<unsigned int> Room::dropLootFromStore() const {
-	std::vector<unsigned int> loot;
-	// ÉÌµêµÄÎïÆ·¿ÉÒÔÊÇÔ¤ÉèºÃµÄ¿â´æ£¬¼ÙÉèÊÇ¿â´æÎïÆ·ID
-	loot.push_back(4001); // ¼ÙÉèÉÌµêÓĞIDÎª4001µÄÎïÆ·³öÊÛ   //ÕâÀï¿ÉÒÔ¸ù¾İÊµ¼ÊĞèÇóµ÷Õû
-	return loot;
-}
-//¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£
-
-
-
-// Ä£Äâ¸ù¾İµĞÈËID»ñÈ¡µôÂäÎïÆ·IDÁĞ±íµÄÍâ²¿º¯Êı
-std::vector<unsigned int> Room::getLootFromEnemy(unsigned int enemyId) const {
-	//¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£
-	//TODO:µ÷ÓÃµĞÈËorµĞÈËÊı¾İ¿âº¯Êı£¬¸ù¾İµĞÈËID»ñÈ¡µôÂäÎïÆ·ID
-	
-
-	// ÕâÀï¼òµ¥Ä£Äâ£¬¸ù¾İµĞÈËID·µ»ØÒ»Ğ©¼ÙÉèµÄµôÂäÎïÆ·ID
-	if (enemyId == 2001) { // ¼ÙÉèµĞÈËID 2001 µôÂäÎïÆ·ID 1001 ºÍ 1002
-		return { 1001, 1002 };
-	}
-	else if (enemyId == 2002) { // ¼ÙÉèµĞÈËID 2002 µôÂäÎïÆ·ID 1003
-		return { 1003 };
-	}
-	// Ä¬ÈÏÃ»ÓĞµôÂä
-	return {};   //×ÜÖ®×îºó·µ»ØµôÂäÎïÆ·µÄÁĞ±í
-}
-
-std::vector<unsigned int> Room::getLootFromNPC(unsigned int npcId) const {
-	//¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£
-	// //TODO:µ÷ÓÃNPC or NPCÊı¾İ¿âº¯Êı£¬¸ù¾İNPC ID»ñÈ¡µôÂäÎïÆ·ID
-	// ÕâÀï¼òµ¥Ä£Äâ£¬¸ù¾İNPC ID·µ»ØÒ»Ğ©¼ÙÉèµÄµôÂäÎïÆ·ID
-	if (npcId == 3001) { // ¼ÙÉèNPC ID 3001 µôÂäÎïÆ·ID 1101
-		return { 1101 };
-	}
-	else if (npcId == 3002) { // ¼ÙÉèNPC ID 3002 µôÂäÎïÆ·ID 1102 ºÍ 1103
-		return { 1102, 1103 };
-	}
-	// Ä¬ÈÏÃ»ÓĞµôÂä
-	return {}; //×ÜÖ®×îºó·µ»ØµôÂäÎïÆ·µÄÁĞ±í
+std::unique_ptr<Item> Room::takeItem(const std::string& itemName) {
+    for (auto it = items.begin(); it != items.end(); ++it) {
+        if ((*it)->getName() == itemName) {
+            std::unique_ptr<Item> foundItem = std::move(*it);
+            items.erase(it);
+            return foundItem;
+        }
+    }
+    return nullptr;
 }

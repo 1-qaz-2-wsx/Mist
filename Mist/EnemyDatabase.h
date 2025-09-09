@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <string>
 #include <unordered_map>
@@ -9,13 +9,13 @@ class EnemyDatabase {
 public:
     bool load(const std::string& filename);
 
-    // »ñÈ¡µĞÈËÄ£°åµÄ³£Á¿Ö¸Õë
+    // è·å–æ•Œäººæ¨¡æ¿çš„å¸¸é‡æŒ‡é’ˆ
     const Enemy* getEnemyTemplate(unsigned int enemyId) const;
 
     /**
-     * @brief ¸ù¾İµĞÈËID´´½¨Ò»¸öĞÂµÄµĞÈËÊµÀı£¨¸±±¾£©
-     * @param enemyId µĞÈËµÄÎ¨Ò»ID
-     * @return Ò»¸öÖ¸ÏòĞÂEnemyÊµÀıµÄunique_ptr£¬Èç¹ûÕÒ²»µ½ÔòÎª¿Õ
+     * @brief æ ¹æ®æ•ŒäººIDåˆ›å»ºä¸€ä¸ªæ–°çš„æ•Œäººå®ä¾‹ï¼ˆå‰¯æœ¬ï¼‰
+     * @param enemyId æ•Œäººçš„å”¯ä¸€ID
+     * @return ä¸€ä¸ªæŒ‡å‘æ–°Enemyå®ä¾‹çš„unique_ptrï¼Œå¦‚æœæ‰¾ä¸åˆ°åˆ™ä¸ºç©º
      */
     std::unique_ptr<Enemy> createInstance(unsigned int enemyId) const;
 

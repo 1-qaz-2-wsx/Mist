@@ -1,75 +1,33 @@
-#include "Map.h"
-#include "RoomDatabase.h"
+ï»¿#include "Map.h"
 #include "Room.h"
-#include "json.hpp"
-#include <iostream>
-#include <fstream>
+#include "RoomDatabase.h"
 
-using json = nlohmann::json;
+void Map::buildFromDatabase(RoomDatabase* roomDB) {
+    // 1. æ¸…ç©ºæ—§çš„åœ°å›¾æ•°æ®
+    rooms_.clear();
 
-Map::Map(RoomDatabase& db) : db_(db) {}
+    // 2. ä»æ•°æ®åº“è·å–æ‰€æœ‰æˆ¿é—´çš„ID
+    std::vector<unsigned int> allIds = roomDB->getAllRoomIds();
 
-bool Map::load(const std::string& filename) {
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        std::cerr << "ÎŞ·¨´ò¿ªµØÍ¼ÎÄ¼ş: " << filename << "\n";
-        return false;
+    // 3. ä¸ºæ¯ä¸€ä¸ªIDï¼Œä»æ•°æ®åº“åˆ›å»ºä¸€ä¸ªæˆ¿é—´å®ä¾‹ï¼Œå¹¶å­˜å…¥åœ°å›¾ä¸­
+    for (unsigned int id : allIds) {
+        // roomDB->createInstance ä¼šè¿”å›ä¸€ä¸ªåŒ…å«å®Œæ•´æ•Œäººå’Œç‰©å“çš„æˆ¿é—´æ·±æ‹·è´
+        rooms_[id] = roomDB->createInstance(id);
     }
 
-    json j;
-    file >> j;
-
-    // ¼ÓÔØ×ø±ê¡ú·¿¼äID
-    if (j.contains("map")) {
-        for (auto& cell : j["map"]) {
-            int x = cell["x"];
-            int y = cell["y"];
-            unsigned int id = cell["roomId"];
-            positionToRoomId[{x, y}] = id;
-        }
-    }
-
-    // ³õÊ¼Î»ÖÃ
-    player_ = { 0,0 };
-    currentRoomId_ = roomAt(0, 0);
-
-    return true;
+    // ä½ å¯ä»¥åœ¨è¿™é‡Œæ·»åŠ é€»è¾‘æ¥ä»æŸä¸ªåœ°æ–¹è¯»å–èµ·å§‹æˆ¿é—´IDï¼Œ
+    // ä½†ç›®å‰æˆ‘ä»¬ä½¿ç”¨é»˜è®¤å€¼ 1
 }
 
-bool Map::movePlayer(int x, int y) {
-    auto it = positionToRoomId.find({ x,y });
-    if (it == positionToRoomId.end()) {
-        std::cout << "ÕâÀïÊ²Ã´¶¼Ã»ÓĞ£¬ÎŞ·¨ÒÆ¶¯£¡\n";
-        return false;
+Room* Map::getRoom(unsigned int roomId) {
+    auto it = rooms_.find(roomId);
+    if (it != rooms_.end()) {
+        // .get() æ–¹æ³•ä» unique_ptr è¿”å›ä¸€ä¸ªè£¸æŒ‡é’ˆ
+        return it->second.get();
     }
-
-    player_ = { x,y };
-    currentRoomId_ = it->second;
-
-    auto room = db_.getRoom(currentRoomId_);
-    if (room) {
-        std::cout << "½øÈë·¿¼ä: " << room->getName() << "\n";
-    }
-    return true;
-}  //ºóÃæ½»¸øGame£¬½øĞĞÀàÓëÀàµÄÁ¬½Ó£¬MapÖ»¸ºÔğ¸ø³öÊÇ·ñÒÆ¶¯³É¹¦µÄĞÅºÅ Game½ÓÊÕĞÅºÅºó£¬½øĞĞ·¿¼äµÄ¼ÓÔØ
-
-unsigned int Map::getCurrentRoomId() const {
-    return currentRoomId_;
+    return nullptr;
 }
 
-unsigned int Map::roomAt(int x, int y) const {
-    auto it = positionToRoomId.find({ x,y });
-    if (it == positionToRoomId.end()) return 0; // 0 ±íÊ¾Ã»ÓĞ·¿¼ä
-    return it->second;
+unsigned int Map::getStartingRoomId() const {
+    return startingRoomId_;
 }
-
-void Map::printMap() const {
-    std::cout << "Íæ¼ÒÎ»ÖÃ: (" << player_.first << "," << player_.second << ")\n";
-    std::cout << "µ±Ç°·¿¼äID: " << currentRoomId_ << "\n";
-
-    for (auto& [pos, id] : positionToRoomId) {
-        std::cout << "·¿¼ä " << id << " ÔÚ×ø±ê (" << pos.first << "," << pos.second << ")\n";
-    }
-}
-
-Map::~Map() {}

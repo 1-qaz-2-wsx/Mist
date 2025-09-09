@@ -1,0 +1,32 @@
+[
+  {
+    "id": 101,
+    "name": "¸ç²¼ÁÖ",
+    "stats": {
+      "maxHp": 20,
+      "attack": 5,
+      "defense": 2
+    },
+    "lootTable": [ 2 ]
+  },
+  {
+    "id": 102,
+    "name": "Ê·À³Ä·",
+    "stats": {
+      "maxHp": 15,
+      "attack": 3,
+      "defense": 5
+    },
+    "lootTable": []
+  },
+  {
+    "id": 201,
+    "name": "¶´Ñ¨¾ÞÄ§",
+    "stats": {
+      "maxHp": 80,
+      "attack": 15,
+      "defense": 8
+    },
+    "lootTable": [ 1, 3 ]
+  }
+]

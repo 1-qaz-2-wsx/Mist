@@ -1,13 +1,19 @@
-#include "RoomDatebase.h"
+#include "RoomDatabase.h"
 #include "Room.h"
 #include <fstream>
 #include "json.hpp"
 
 using json = nlohmann::json;
-RoomDatebase::RoomDatebase() {}
+
+RoomDatabase::RoomDatabase() {}
+RoomDatabase::RoomDatabase(const std::string& filename) {
+	loadFromFile(filename);
+}
+
+RoomDatabase::~RoomDatabase() {}
 
 //增
-bool RoomDatebase::addRoom(const std::shared_ptr<Room>& room) {
+bool RoomDatabase::addRoom(const std::shared_ptr<Room>& room) {
 	if (rooms.find(room->getId()) != rooms.end()) {
 		return false; // ID已存在
 	}
@@ -16,7 +22,7 @@ bool RoomDatebase::addRoom(const std::shared_ptr<Room>& room) {
 }
 
 //删
-bool RoomDatebase::removeRoom(unsigned int roomId) {
+bool RoomDatabase::removeRoom(unsigned int roomId) {
 	auto it = rooms.find(roomId);
 	if (it == rooms.end()) {
 		return false; // ID不存在
@@ -26,7 +32,7 @@ bool RoomDatebase::removeRoom(unsigned int roomId) {
 }
 
 //查 
-std::shared_ptr<Room> RoomDatebase::getRoom(unsigned int roomId) const {
+std::shared_ptr<Room> RoomDatabase::getRoom(unsigned int roomId) const {
 	auto it = rooms.find(roomId);
 	if (it == rooms.end()) {
 		return nullptr; // ID不存在
@@ -35,16 +41,16 @@ std::shared_ptr<Room> RoomDatebase::getRoom(unsigned int roomId) const {
 }
 
 //检查
-bool RoomDatebase::hasRoom(unsigned int roomId) const {
+bool RoomDatabase::hasRoom(unsigned int roomId) const {
 	return rooms.find(roomId) != rooms.end();
 }
 
-const std::map<unsigned int, std::shared_ptr<Room>>& RoomDatebase::getAllRooms() const {
+const std::map<unsigned int, std::shared_ptr<Room>>& RoomDatabase::getAllRooms() const {
 	return rooms;
 }
 
 // JSON 读写
-bool RoomDatebase::loadFromFile(const std::string& filename) {
+bool RoomDatabase::loadFromFile(const std::string& filename) {
 	std::ifstream inFile(filename);
 	if (!inFile.is_open()) {
 		return false; // 文件打开失败
@@ -67,7 +73,7 @@ bool RoomDatebase::loadFromFile(const std::string& filename) {
 	return true;
 }
 
-bool RoomDatebase::saveToFile(const std::string& filename) const {
+bool RoomDatabase::saveToFile(const std::string& filename) const {
 	std::ofstream outFile(filename);
 	if (!outFile.is_open()) {
 		return false; // 文件打开失败
@@ -86,4 +92,3 @@ bool RoomDatebase::saveToFile(const std::string& filename) const {
 }
 
 
-RoomDatebase::~RoomDatebase() {}

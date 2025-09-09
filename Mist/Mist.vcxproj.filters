@@ -27,9 +27,6 @@
     <ClCompile Include="Item.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyTemplate.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -51,6 +48,12 @@
     <ClCompile Include="Map.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BattleSystem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entity.h">
@@ -60,9 +63,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Item.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyTemplate.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
@@ -80,7 +80,7 @@
     <ClInclude Include="Room.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="RoomDatebase.h">
+    <ClInclude Include="RoomDatabase.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="json.hpp">
@@ -89,9 +89,24 @@
     <ClInclude Include="Map.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BattleSystem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="rooms.json">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="map.json">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="items.json">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="enymies.json">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>

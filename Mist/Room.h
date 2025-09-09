@@ -2,6 +2,10 @@
 #include "Entity.h"
 #include <map>
 #include <vector>
+
+class Enemy;
+class EnemyDatabase;
+
 enum RoomType {
 	DEFAULT,
     FIGHT,
@@ -35,6 +39,7 @@ private:
 	std::vector<unsigned int> items; //房间内物品ID
 	std::vector<unsigned int> enemys; //房间内敌人ID
 	std::vector<unsigned int> npcs; //房间内NPC ID
+
 
 
 public:
@@ -79,6 +84,21 @@ public:
 	void toJson(json& j) const override;  //
 	void fromJson(const json& j) override;
 
+	std::vector<unsigned int> dropLoot() const; //掉落物品ID列表，来自战斗系统击败敌人 NPC任务触发  或者商店购买
+
+
+
 	~Room() override;
+
+private:
+	std::vector<unsigned int> dropLootFromEnemies() const;
+	std::vector<unsigned int> dropLootFromNPCs() const;
+
+	std::vector<unsigned int> dropLootFromStore() const;
+
+	std::vector<unsigned int> getLootFromEnemy(unsigned int enemyId) const;  //获取敌人掉落物品ID列表
+	std::vector<unsigned int> getLootFromNPC(unsigned int npcId) const;  //获取NPC掉落物品ID列表
+
+
 };
 

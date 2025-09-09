@@ -30,20 +30,20 @@ bool Entity::FullMatch(const std::string& name) const {
 }
 
 //部分匹配
-bool Entity::Match(const std::string& name) const {
-    std::string name = CompName();     // 当前对象的名字（小写）
-    std::string search = name;
+bool Entity::Match(const std::string& search) const {
+    std::string name_ = CompName();     // 当前对象的名字（小写）
 
     // 转成小写（避免大小写干扰）
     std::transform(search.begin(), search.end(), search.begin(),
         [](unsigned char c) { return std::tolower(c); });
 
-    size_t pos = name.find(search);     // 查找子串
+    size_t pos = name_.find(search);     // 查找子串
+
     while (pos != std::string::npos) {
         // 匹配必须在开头，或是一个单词边界（前一个字符是空格）
-        if (pos == 0 || name[pos - 1] == ' ')
+        if (pos == 0 || name_[pos - 1] == ' ')
             return true;
-        pos = name.find(search, pos + 1);   // 继续查找下一个
+        pos = name_.find(search, pos + 1);   // 继续查找下一个
     }
     return false;
 }

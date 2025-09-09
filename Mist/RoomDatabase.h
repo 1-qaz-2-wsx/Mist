@@ -5,13 +5,15 @@
 
 class Room;
 
-class RoomDatebase
+class RoomDatabase
 {
 private:
 	std::map<unsigned int, std::shared_ptr<Room>> rooms; //房间ID->房间指针
 	
 public:
-	RoomDatebase();
+	RoomDatabase();
+	RoomDatabase(const std::string& filename); //构造时可直接从文件加载
+
 
 	//添加房间
 	bool addRoom(const std::shared_ptr<Room>& room); //添加房间，若ID已存在返回false
@@ -29,8 +31,9 @@ public:
 	bool loadFromFile(const std::string& filename); //从文件加载房间数据  填充rooms
 	bool saveToFile(const std::string& filename) const; //保存房间数据到文件，json文件里以数组形式储存。
 
+
 	//析构函数
-	~RoomDatebase();
+	~RoomDatabase();
 
 
 

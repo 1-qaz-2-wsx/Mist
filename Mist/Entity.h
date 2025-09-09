@@ -8,7 +8,7 @@ class Entity
 {
 protected:
 	std::string name;  //Ãû³Æ
-	unsigned int id_;  //Î¨Ò»ID
+	unsigned int id;  //Î¨Ò»ID
 public:
 	Entity();
 	Entity(const std::string& name, unsigned int id);

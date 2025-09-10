@@ -1,55 +1,25 @@
 ﻿#pragma once
-
-#include "Entity.h"
-#include "Stats.h"
+#include <string>
 #include <vector>
-#include <memory>
+#include "Item.h"
+#include "Room.h"
 
-// 前向声明
-class Item;
-class Game;
-
-class Player : public Entity {
+class Player {
 public:
-    Stats stats;
-    int currentHp;
+    int health;
+    int maxHealth;
+    int attack;
+    int defense;
+    Room* currentRoom;
+    std::vector<Item> inventory;
 
-private:
-    unsigned int currentRoomId_;
-    std::vector<std::unique_ptr<Item>> inventory_;
-    Game* mediator_ = nullptr; // 指向中介者(Game)的非拥有指针
+    Player(Room* startRoom);
 
-public:
-    Player();
-
-    // --- 核心方法 ---
-
-    /**
-     * @brief 向背包中添加一个物品
-     * @param item 一个指向物品实例的 unique_ptr
-     */
-    void addItemToInventory(std::unique_ptr<Item> item);
-
-    /**
-     * @brief 显示玩家的背包
-     */
-    void displayInventory() const;
-
-    /**
-     * @brief 受到伤害
-     * @param damageAmount 受到的伤害值
-     */
-    void takeDamage(int damageAmount);
-
-    /**
-     * @brief 检查玩家是否还存活
-     * @return true 如果 currentHp > 0
-     */
+    void move(const std::string& direction);
+    void takeItem(const Item& item);
+    void useItem(const std::string& itemName);
+    void showStatus() const;
+    void showInventory() const;
     bool isAlive() const;
-
-    // --- Getters & Setters ---
-
-    void setMediator(Game* game) { mediator_ = game; }
-    void setCurrentRoomId(unsigned int id) { currentRoomId_ = id; }
-    unsigned int getCurrentRoomId() const { return currentRoomId_; }
+    void takeDamage(int damage);
 };

@@ -6,7 +6,7 @@ using json = nlohmann::json;
 
 class Entity
 {
-protected:
+public:
 	std::string name_;  //名称
 	unsigned int id_;  //唯一ID
 public:

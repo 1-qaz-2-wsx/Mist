@@ -1,33 +1,50 @@
 ﻿#include "Map.h"
-#include "Room.h"
-#include "RoomDatabase.h"
+#include "Enemy.h"
+#include "NPC.h"
 
-void Map::buildFromDatabase(RoomDatabase* roomDB) {
-    // 1. 清空旧的地图数据
-    rooms_.clear();
+Map::Map() : startRoom(nullptr) {}
 
-    // 2. 从数据库获取所有房间的ID
-    std::vector<unsigned int> allIds = roomDB->getAllRoomIds();
-
-    // 3. 为每一个ID，从数据库创建一个房间实例，并存入地图中
-    for (unsigned int id : allIds) {
-        // roomDB->createInstance 会返回一个包含完整敌人和物品的房间深拷贝
-        rooms_[id] = roomDB->createInstance(id);
+Map::~Map() {
+    for (Room* room : allRooms) {
+        delete room;
     }
-
-    // 你可以在这里添加逻辑来从某个地方读取起始房间ID，
-    // 但目前我们使用默认值 1
+    allRooms.clear();
 }
 
-Room* Map::getRoom(unsigned int roomId) {
-    auto it = rooms_.find(roomId);
-    if (it != rooms_.end()) {
-        // .get() 方法从 unique_ptr 返回一个裸指针
-        return it->second.get();
-    }
-    return nullptr;
-}
 
-unsigned int Map::getStartingRoomId() const {
-    return startingRoomId_;
+void Map::build() {
+    // 1. 创建物品
+    Item* healthPotion = new Item("生命药水", "恢复50点生命值", ItemEffect::HEAL, 50);
+    Item* rustySword = new Item("生锈的剑", "增加10点攻击力", ItemEffect::ATTACK_BUFF, 10);
+    Item* goblinLoot = new Item("哥布林的牙齿", "一个战利品", ItemEffect::HEAL, 5); // 哥布林掉落物
+
+    // 2. 创建房间
+    Room* r1 = new Room("你身处一个昏暗的【初始之地】，四周弥漫着薄雾。");
+    Room* r2 = new Room("这里是【低语森林】，偶尔能听到怪物的嘶吼。北边有一片空地。");
+    Room* r3 = new Room("你来到一片【宁静空地】，中央有一个和蔼的【老人】。西边是森林。");
+
+    // 3. 创建生物
+    Enemy* goblin = new Enemy("哥布林", 40, 10, 2, *goblinLoot);
+    NPC* oldMan = new NPC("老人", "年轻人，这瓶药水你拿去吧，路上要小心。", *healthPotion);
+
+    // 4. 将生物和物品放入房间
+    r2->enemy = goblin;
+    r3->npc = oldMan;
+    // r1->item = rustySword; // 比如在初始地放一把剑
+
+    // 5. 连接房间
+    r1->exits["north"] = r2;
+    r2->exits["south"] = r1;
+    r2->exits["north"] = r3;
+    r3->exits["south"] = r2;
+
+    // 6. 设置起点
+    startRoom = r1;
+
+    // 7. 将所有房间加入管理器以便释放内存
+    allRooms.push_back(r1);
+    allRooms.push_back(r2);
+    allRooms.push_back(r3);
+
+    // 注意：这里动态分配的Item, Enemy, NPC需要在Room的析构函数中被delete
 }

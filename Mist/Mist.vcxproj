@@ -134,44 +134,23 @@
   <ItemGroup>
     <ClCompile Include="BattleSystem.cpp" />
     <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="EnemyDatabase.cpp" />
-    <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="Exit.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Item.cpp" />
-    <ClCompile Include="ItemDatabase.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Mist.cpp" />
+    <ClCompile Include="NPC.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Room.cpp" />
-    <ClCompile Include="RoomDatebase.cpp" />
-    <ClCompile Include="Stats.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BattleSystem.h" />
     <ClInclude Include="Enemy.h" />
-    <ClInclude Include="EnemyDatabase.h" />
-    <ClInclude Include="Entity.h" />
-    <ClInclude Include="Exit.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Item.h" />
-    <ClInclude Include="ItemDatabase.h" />
-    <ClInclude Include="json.hpp" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="NPC.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Room.h" />
-    <ClInclude Include="RoomDatabase.h" />
-    <ClInclude Include="Stats.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="data\enemies.json" />
-    <None Include="data\items.json" />
-    <None Include="data\map.json" />
-    <None Include="data\rooms.json" />
-    <None Include="enymies.json" />
-    <None Include="items.json" />
-    <None Include="map.json" />
-    <None Include="rooms.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

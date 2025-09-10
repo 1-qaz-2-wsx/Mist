@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "废弃的哨塔",
+    "pos": {
+      "x": 10,
+      "y": 5
+    },
+    "description": "你站在一座摇摇欲坠的哨塔里。尘土飞扬，墙壁上布满了裂缝。北边有一扇沉重的木门。",
+    "exits": {
+      "north": {
+        "destination": 2,
+        "locked": true,
+        "keyId": 3
+      }
+    },
+    "items": [],
+    "enemies": []
+  },
+  {
+    "id": 2,
+    "name": "阴暗的森林",
+    "pos": {
+      "x": 10,
+      "y": 4
+    },
+    "description": "你进入了一片阴暗的森林...",
+    "exits": {
+      "south": {
+        "destination": 1
+        // 这个出口没有 "locked" 和 "keyId" 字段，所以会使用默认值（不上锁）
+      }
+    },
+    "items": [ 3 ],
+    "enemies": [ 101 ]
+  }
+]

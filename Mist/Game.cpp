@@ -1,344 +1,191 @@
-﻿// Game.cpp
-
-#include "Game.h"
-#include <algorithm>  //辅助修剪字符串
-
-
-// ----------------------------------------------------------------
-// 包含所有“同事类”和工具类的头文件
-// ----------------------------------------------------------------
-// 在.cpp文件中，我们需要包含所有需要进行交互的类的完整定义。
-#include "Player.h"
-#include "Map.h"
+﻿#include "Game.h"
 #include "BattleSystem.h"
-#include "Room.h"
-#include "ItemDatabase.h"
-#include "EnemyDatabase.h"
-#include "RoomDatabase.h"
-
 #include <iostream>
 #include <string>
-#include <sstream> // 用于解析字符串输入
+#include "NPC.h"
 
-
-// 辅助函数：修剪字符串两端的空格、制表符、换行符等 -->用于解决拾取逻辑中 字符串识别问题
-std::string trim(const std::string& str) {
-    const std::string WHITESPACE = " \t\n\r\f\v";
-    size_t first = str.find_first_not_of(WHITESPACE);
-    if (std::string::npos == first) {
-        return str; // 字符串全是空格
-    }
-    size_t last = str.find_last_not_of(WHITESPACE);
-    return str.substr(first, (last - first + 1));
-}
-
-// --- 构造/析构函数 ---
-
-Game::Game() {
-    // 构造函数可以保持为空，真正的初始化在 initialize() 中进行
-    // unique_ptr 默认会初始化为 nullptr
-}
-
-// 析构函数必须在.cpp中实现，因为头文件中只有前向声明
-// 在这里，编译器看到了所有类的完整定义，知道如何正确销毁 unique_ptr
-Game::~Game() {
-}
-
-// --- 游戏主流程控制 ---
-
-bool Game::initialize(const std::string& dataFolderPath) {
-    std::cout << "正在初始化游戏..." << std::endl;
-
-    try {
-        // 1. 创建并加载数据库 (顺序很重要，因为其他系统依赖它们)
-        itemDB_ = std::make_unique<ItemDatabase>();
-        itemDB_->load(dataFolderPath + "/items.json");
-
-        enemyDB_ = std::make_unique<EnemyDatabase>();
-        enemyDB_->load(dataFolderPath + "/enemies.json");
-
-        roomDB_ = std::make_unique<RoomDatabase>();
-        roomDB_->load(dataFolderPath + "/rooms.json", itemDB_.get(), enemyDB_.get());
-
-        // 2. 创建地图并构建世界
-        map_ = std::make_unique<Map>();
-        map_->buildFromDatabase(roomDB_.get()); // 使用.get()从unique_ptr获取裸指针
-
-        // 3. 创建玩家并设置初始位置
-        player_ = std::make_unique<Player>(); // 你可以在Player构造函数中设置初始属性
-        player_->setCurrentRoomId(map_->getStartingRoomId());
-
-        // 4. 创建战斗系统
-        battleSystem_ = std::make_unique<BattleSystem>();
-
-        // 5. [关键] 将中介者(Game* this)注入需要它的同事类
-        // 注意: 你需要在 BattleSystem 和 Player 类中添加 setMediator(Game* game) 方法
-        battleSystem_->setMediator(this);
-        // player_->setMediator(this); // 如果Player也需要回调Game，也添加这行
-
-    }
-    catch (const std::exception& e) {
-        // 如果任何步骤失败（例如文件找不到、JSON格式错误），则初始化失败
-        std::cerr << "初始化失败: " << e.what() << std::endl;
-        return false;
-    }
-
-    isRunning_ = true;
-    std::cout << "初始化成功！" << std::endl;
-    return true;
+// Game构造函数：初始化游戏世界
+Game::Game()
+    : gameMap(),
+    player(gameMap.startRoom),
+    mistMonster("迷雾怪物", 200, 25, 10, Item("迷雾核心", "一个强大的能量源", ItemEffect::ATTACK_BUFF, 20)),
+    isRunning(true)
+{
+    gameMap.build();
+    player.currentRoom = gameMap.startRoom; // 确保玩家在正确的起始房间
 }
 
 void Game::run() {
-    if (!isRunning_) {
-        std::cout << "游戏未初始化。" << std::endl;
+    showLogo();
+    while (isRunning) {
+        showMainMenu();
+        std::string choice;
+        std::cout << "请输入你的选择: ";
+        std::cin >> choice;
+        std::cout << "\n----------------------------------------\n";
+
+        if (choice == "1") {
+            explore();
+        }
+        else if (choice == "2") {
+            showCommands();
+        }
+        else if (choice == "3") {
+            isRunning = false;
+            std::cout << "感谢游玩《Mist Monster》。\n";
+        }
+        else if (choice == "4") {
+            challengeMonster();
+        }
+        else {
+            std::cout << "无效的输入，请重新选择。\n";
+        }
+        std::cout << "----------------------------------------\n\n";
+    }
+}
+
+void Game::showLogo() const {
+    std::cout << "########################################\n";
+    std::cout << "#                                      #\n";
+    std::cout << "#            Mist Monster              #\n";
+    std::cout << "#                                      #\n";
+    std::cout << "########################################\n\n";
+}
+
+void Game::showMainMenu() {
+    std::cout << "你现在该做什么？\n";
+    std::cout << "1. 发育探索\n";
+    std::cout << "2. 查看指令\n";
+    std::cout << "3. 退出游戏\n";
+    std::cout << "4. 挑战迷雾怪物\n";
+}
+
+void Game::explore() {
+    player.currentRoom->look();
+    handleRoomInteraction();
+
+    if (!player.isAlive()) {
+        resetGame();
         return;
     }
 
-    std::cout << "\n欢迎来到 MUD 世界！" << std::endl;
-    std::cout << "输入 'help' 查看可用指令。" << std::endl;
-
-    // 触发进入初始房间的逻辑
-    enterRoom(player_->getCurrentRoomId());
-
-    while (isRunning_) {
-        gameLoop();
-    }
-
-    std::cout << "感谢游玩，再见！" << std::endl;
-}
-
-
-// --- 中介者接口实现 ---
-
-void Game::notifyBattleFinished(bool playerWon, const std::vector<unsigned int>& lootItemIds) {
-    std::cout << "\n[系统] 战斗结束。" << std::endl;
-    // 战斗结束后，调用内部逻辑处理后续事宜
-    processBattleAftermath(playerWon, lootItemIds);
-}
-
-
-// --- 内部逻辑与流程处理 ---
-
-void Game::gameLoop() {
-    std::cout << "\n> "; // 显示输入提示符
-    processPlayerInput();
-}
-
-void Game::processPlayerInput() {
-    std::string line;
-    std::getline(std::cin, line);
-
-    // 使用 stringstream 来轻松分割命令和参数
-    std::stringstream ss(line);
+    std::cout << "\n接下来要做什么？ (输入 'help' 查看探索指令): ";
     std::string command;
-    ss >> command;
+    std::cin.ignore(); // 清除之前的换行符
+    std::getline(std::cin, command);
+    processPlayerInput(command);
+}
 
-    // 将命令转为小写，方便比较
-    for (char& c : command) {
-        c = tolower(c);
+void Game::processPlayerInput(const std::string& input) {
+    std::string command;
+    std::string argument;
+    size_t space_pos = input.find(' ');
+
+    if (space_pos != std::string::npos) {
+        command = input.substr(0, space_pos);
+        argument = input.substr(space_pos + 1);
+    }
+    else {
+        command = input;
     }
 
-    // 根据命令分发到不同的处理函数
-    if (command == "go" || command == "move") {
-        std::string direction;
-        ss >> direction;
-        handleMoveCommand(direction);
+    if (command == "go") {
+        player.move(argument);
     }
-    else if (command == "look" || command == "l") {
-        handleLookCommand();
+    else if (command == "look") {
+        player.currentRoom->look();
     }
-    else if (command == "attack") {
-        std::string argument;
-        std::getline(ss, argument); // 读取ss中剩余的全部内容
-        std::string targetName = trim(argument); // 用trim()清理参数
-        handleAttackCommand(targetName);
+    else if (command == "status") {
+        player.showStatus();
     }
-    else if (command == "take" || command == "get") {
-        std::string argument;
-        std::getline(ss, argument); // 读取ss中剩余的全部内容
-
-        std::string itemName = trim(argument); // 用trim()清理参数
-		std::cout<< itemName ;
-        handleTakeCommand(itemName);
+    else if (command == "inventory" || command == "inv") {
+        player.showInventory();
     }
-    else if (command == "inventory" || command == "inv" || command == "i") {
-        handleInventoryCommand();
+    else if (command == "use") {
+        player.useItem(argument);
     }
     else if (command == "help") {
-        handleHelpCommand();
-    }
-    else if (command == "quit" || command == "exit") {
-        handleQuitCommand();
+        std::cout << "探索指令: go [方向], look, status, inventory, use [物品名]\n";
     }
     else {
-        std::cout << "未知指令。输入 'help' 查看帮助。" << std::endl;
+        std::cout << "未知的指令。\n";
     }
 }
 
-void Game::displayCurrentState() const {
-    Room* currentRoom = map_->getRoom(player_->getCurrentRoomId());
-    if (!currentRoom) {
-        std::cerr << "错误：玩家当前房间无效！" << std::endl;
-        return;
-    }
 
-    // 调用Room自己的方法来显示信息 (这是Room类的职责)
-    currentRoom->display();
-}
+void Game::handleRoomInteraction() {
+    Room* room = player.currentRoom;
 
-void Game::enterRoom(unsigned int newRoomId) {
-    player_->setCurrentRoomId(newRoomId);
-    std::cout << "\n----------------------------------------" << std::endl;
-    handleLookCommand(); // 进入新房间后自动执行 "look"
+    // 遇敌
+    if (room->enemy != nullptr) {
+        std::cout << "\n你遇到了 " << room->enemy->name << "!\n";
+        BattleSystem battle;
+        bool playerWon = battle.startBattle(player, *room->enemy);
 
-    // 检查房间内是否有敌人，并可能触发战斗
-    checkForEnemiesAndInitiateBattle();
-}
-
-
-// --- 玩家指令处理函数 ---
-
-void Game::handleMoveCommand(const std::string& direction) {
-    if (direction.empty()) {
-        std::cout << "你要往哪个方向走？(north, south, east, west...)" << std::endl;
-        return;
-    }
-
-    unsigned int currentRoomId = player_->getCurrentRoomId();
-    Room* currentRoom = map_->getRoom(currentRoomId);
-
-    // 向Map系统查询出口信息
-    int nextRoomId = currentRoom->getExit(direction);
-
-    if (nextRoomId != -1) { // -1 代表没有出口
-        std::cout << "你向 " << direction << " 方向走去..." << std::endl;
-        enterRoom(static_cast<unsigned int>(nextRoomId));
-    }
-    else {
-        std::cout << "这个方向没有路。" << std::endl;
-    }
-}
-
-void Game::handleLookCommand() const {
-    displayCurrentState();
-}
-
-void Game::handleAttackCommand(const std::string& targetName) {
-    if (targetName.empty()) {
-        std::cout << "你要攻击谁？" << std::endl;
-        return;
-    }
-
-    Room* currentRoom = map_->getRoom(player_->getCurrentRoomId());
-    if (!currentRoom || currentRoom->enemies.empty()) {
-        std::cout << "这里没有敌人。" << std::endl;
-        return;
-    }
-
-    // 查找敌人
-    Enemy* target = nullptr;
-    for (const auto& enemy : currentRoom->enemies) {
-        if (enemy->getName() == targetName) { // 这里可以用更灵活的匹配
-            target = enemy.get();
-            break;
+        if (playerWon) {
+            std::cout << "你击败了 " << room->enemy->name << "!\n";
+            Item droppedLoot = room->enemy->loot;
+            std::cout << "你获得了物品: " << droppedLoot.name << ".\n";
+            player.takeItem(droppedLoot);
+            delete room->enemy; // 怪物被打败后从房间移除
+            room->enemy = nullptr;
+        }
+        else {
+            std::cout << "你被击败了...游戏结束。\n";
+            // Game over logic handled in main loop
         }
     }
 
-    if (target) {
-        // [中介者模式] Game命令BattleSystem开始战斗
-        battleSystem_->startBattle(player_.get(), target);
-    }
-    else {
-        std::cout << "这里没有名叫 " << targetName << " 的敌人。" << std::endl;
-    }
-}
-
-void Game::handleTakeCommand(const std::string& itemName) {
-    if (itemName.empty()) {
-        std::cout << "你要拾取什么？" << std::endl;
-        return;
-    }
-    // TODO: 实现拾取逻辑
-    // 1. 获取当前房间
-    Room* currentRoom = map_->getRoom(player_->getCurrentRoomId());
-    if (!currentRoom) return;
-
-    // 2. 尝试从房间拿出物品 (中介者协调)
-    std::unique_ptr<Item> item = currentRoom->takeItem(itemName);
-
-    // 3. 如果成功，则交给玩家 (中介者协调)
-    if (item) {
-        player_->addItemToInventory(std::move(item));
-    }
-    else {
-        std::cout << "地上没有这个东西。" << std::endl;
+    // 遇NPC
+    if (room->npc != nullptr) {
+        room->npc->talk();
+        if (!room->npc->hasGivenItem) {
+            Item receivedItem = room->npc->giveItem();
+            std::cout << "你从 " << room->npc->name << " 那里获得了: " << receivedItem.name << "!\n";
+            player.takeItem(receivedItem);
+        }
     }
 }
 
-void Game::handleInventoryCommand() const {
-    player_->displayInventory();
-    //std::cout << "你的背包是空的（物品栏系统尚未实现）。" << std::endl;
+void Game::showCommands() const {
+    std::cout << "--- 游戏指令列表 ---\n";
+    std::cout << "主菜单指令:\n";
+    std::cout << "  1: 进入探索模式，你可以在地图上移动和互动。\n";
+    std::cout << "  2: 显示此帮助列表。\n";
+    std::cout << "  3: 退出游戏。\n";
+    std::cout << "  4: 直接挑战最终Boss迷雾怪物。\n";
+    std::cout << "\n探索模式指令:\n";
+    std::cout << "  go [north/south/east/west]: 向指定方向移动。\n";
+    std::cout << "  look: 查看当前房间的描述。\n";
+    std::cout << "  status: 查看你的当前状态。\n";
+    std::cout << "  inventory (或 inv): 查看你的背包。\n";
+    std::cout << "  use [物品名]: 使用背包中的一个物品。\n";
+    std::cout << "--------------------\n";
 }
 
-void Game::handleHelpCommand() const {
-    std::cout << "--- 可用指令 ---\n"
-        << "go [direction] - 向指定方向移动 (e.g., go north)\n"
-        << "look           - 查看当前环境\n"
-        << "attack [name]  - 攻击指定敌人\n"
-        << "take [item]    - 拾取地上的物品\n"
-        << "inventory      - 查看你的背包\n"
-        << "quit           - 离开游戏\n"
-        << "-----------------" << std::endl;
-}
-
-void Game::handleQuitCommand() {
-    std::cout << "你确定要离开游戏吗？(yes/no)" << std::endl;
-    std::string confirmation;
-    std::cin >> confirmation;
-    // 清理cin的缓冲区
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-    if (confirmation == "yes" || confirmation == "y") {
-        isRunning_ = false;
-    }
-    else {
-        std::cout << "你决定继续冒险。" << std::endl;
-    }
-}
-
-
-// --- 内部事件处理 ---
-
-void Game::checkForEnemiesAndInitiateBattle() {
-    Room* currentRoom = map_->getRoom(player_->getCurrentRoomId());
-    // 简单设计：如果房间里有敌人，自动触发与第一个敌人的战斗
-    if (currentRoom && !currentRoom->enemies.empty()) {
-        std::cout << "\n你遭遇了敌人！" << std::endl;
-        // 使用 .get() 从 unique_ptr 获取裸指针
-        battleSystem_->startBattle(player_.get(), currentRoom->enemies[0].get());
-    }
-}
-
-void Game::processBattleAftermath(bool playerWon, const std::vector<unsigned int>& lootItemIds) {
-    Room* currentRoom = map_->getRoom(player_->getCurrentRoomId());
-    if (!currentRoom) return;
+void Game::challengeMonster() {
+    std::cout << "你鼓起勇气，决定挑战最终的迷雾怪物！\n";
+    BattleSystem battle;
+    bool playerWon = battle.startBattle(player, mistMonster);
 
     if (playerWon) {
-        std::cout << "你取得了胜利！" << std::endl;
-        // 清空房间里的所有敌人 (简化处理)
-        currentRoom->enemies.clear();
-
-        // 根据战利品ID，从ItemDatabase创建物品实例并放到地上
-        for (unsigned int itemId : lootItemIds) {
-            auto lootItem = itemDB_->createInstance(itemId);
-            if (lootItem) {
-                std::cout << "敌人掉落了 [" << lootItem->getName() << "]。" << std::endl;
-                currentRoom->items.push_back(std::move(lootItem));
-            }
-        }
+        std::cout << "\n****************************************\n";
+        std::cout << "你成功击败了迷雾怪物！浓雾散去，你找到了出路。\n";
+        std::cout << "结局：【逃脱】\n";
+        std::cout << "****************************************\n";
+        isRunning = false; // 游戏结束
     }
     else {
-        std::cout << "你被击败了... 游戏结束。" << std::endl;
-        isRunning_ = false; // 玩家死亡，游戏结束
+        std::cout << "\n****************************************\n";
+        std::cout << "迷雾吞噬了你，你永远地迷失在了这里。\n";
+        std::cout << "结局：【迷失】\n";
+        std::cout << "****************************************\n";
+        isRunning = false; // 游戏结束
     }
+}
+
+void Game::resetGame() {
+    std::cout << "\n...回到了初始的界面...\n\n";
+    // 创建一个新的Player对象来重置状态
+    player = Player(gameMap.startRoom);
 }

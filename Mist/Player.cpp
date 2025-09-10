@@ -1,62 +1,79 @@
 ﻿#include "Player.h"
-#include "Item.h" // 需要包含完整定义
-#include "Game.h" // 用于通知中介者
 #include <iostream>
 
-Player::Player() {
-    // 初始化玩家的默认属性
-    // 以后这里可以从"player_save.json"之类的地方加载
-    name_ = "冒险者"; // 继承自 Entity
-    id_ = 0;           // 继承自 Entity, 玩家ID默认是0
+Player::Player(Room* startRoom)
+    : maxHealth(100), health(100), attack(10), defense(5), currentRoom(startRoom) {}
 
-    stats.maxHp = 100;
-    stats.attack = 10;
-    stats.defense = 5;
-
-    currentHp = stats.maxHp;
-    currentRoomId_ = 1; // 默认初始房间ID，Game::initialize会覆盖它
-}
-
-void Player::addItemToInventory(std::unique_ptr<Item> item) {
-    if (item) {
-        std::cout << "你将 [" << item->getName() << "] 放入了背包。" << std::endl;
-        inventory_.push_back(std::move(item));
-    }
-}
-
-void Player::displayInventory() const {
-    std::cout << "--- 你的背包 ---" << std::endl;
-    if (inventory_.empty()) {
-        std::cout << "空空如也..." << std::endl;
+void Player::move(const std::string& direction) {
+    auto it = currentRoom->exits.find(direction);
+    if (it != currentRoom->exits.end()) {
+        currentRoom = it->second;
+        std::cout << "你移动到了 " << direction << ".\n";
     }
     else {
-        for (const auto& item : inventory_) {
-            std::cout << "- " << item->getName() << " (" << item->description << ")" << std::endl;
-        }
+        std::cout << "那个方向没有路。\n";
     }
-    std::cout << "----------------" << std::endl;
 }
 
-void Player::takeDamage(int damageAmount) {
-    // 实际伤害 = 攻击力 - 防御力 (可以设计更复杂的公式)
-    int actualDamage = damageAmount - stats.defense;
-    if (actualDamage < 1) {
-        actualDamage = 1; // 保证至少受到1点伤害
-    }
+void Player::takeItem(const Item& item) {
+    inventory.push_back(item);
+    std::cout << "你将 " << item.name << " 放入了背包。\n";
+}
 
-    currentHp -= actualDamage;
-    std::cout << "你受到了 " << actualDamage << " 点伤害！" << std::endl;
-
-    if (!isAlive()) {
-        std::cout << "你的生命值降到了0..." << std::endl;
-        // [中介者模式]
-        // 玩家死亡，它不自己处理游戏结束逻辑，而是通知中介者
-        // if (mediator_) {
-        //     mediator_->notifyPlayerDied(); // 我们之后可以在Game中添加这个函数
-        // }
+void Player::useItem(const std::string& itemName) {
+    for (auto it = inventory.begin(); it != inventory.end(); ++it) {
+        if (it->name == itemName) {
+            std::cout << "你使用了 " << it->name << "。 " << it->description << "\n";
+            switch (it->effect) {
+            case ItemEffect::HEAL:
+                health += it->value;
+                if (health > maxHealth) health = maxHealth;
+                std::cout << "你的生命值恢复了 " << it->value << " 点。\n";
+                break;
+            case ItemEffect::ATTACK_BUFF:
+                attack += it->value;
+                std::cout << "你的攻击力永久提升了 " << it->value << " 点。\n";
+                break;
+            case ItemEffect::DEFENSE_BUFF:
+                defense += it->value;
+                std::cout << "你的防御力永久提升了 " << it->value << " 点。\n";
+                break;
+            }
+            inventory.erase(it); // 使用后物品消失
+            return;
+        }
     }
+    std::cout << "你的背包里没有叫做 '" << itemName << "' 的物品。\n";
+}
+
+void Player::showStatus() const {
+    std::cout << "--- 玩家状态 ---\n";
+    std::cout << "生命值: " << health << " / " << maxHealth << "\n";
+    std::cout << "攻击力: " << attack << "\n";
+    std::cout << "防御力: " << defense << "\n";
+    std::cout << "------------------\n";
+}
+
+void Player::showInventory() const {
+    std::cout << "--- 背包 ---\n";
+    if (inventory.empty()) {
+        std::cout << "你的背包是空的。\n";
+    }
+    else {
+        for (const auto& item : inventory) {
+            std::cout << "- " << item.name << " (" << item.description << ")\n";
+        }
+    }
+    std::cout << "------------\n";
 }
 
 bool Player::isAlive() const {
-    return currentHp > 0;
+    return health > 0;
+}
+
+void Player::takeDamage(int damage) {
+    health -= damage;
+    if (health < 0) {
+        health = 0;
+    }
 }

@@ -40,6 +40,21 @@ void Room::look() const {
 void Room::takeItem(Item* item) {
     items.push_back(item);
 }
+
+
+Item* Room::removeItem(const std::string& itemName) {
+    // 遍历房间中的物品列表
+    for (auto it = items.begin(); it != items.end(); ++it) {
+        // 检查物品指针是否有效，并且名称是否匹配
+        if (*it != nullptr && (*it)->name == itemName) {
+            Item* foundItem = *it; // 存储找到的物品指针
+            items.erase(it); // 从房间的列表中移除该指针
+            return foundItem; // 返回找到的物品指针
+        }
+    }
+    return nullptr; // 如果没有找到，返回空指针
+}
+
 std::string Room::getName() {
 	return name;
 }

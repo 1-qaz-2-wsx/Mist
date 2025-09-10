@@ -57,7 +57,11 @@ void Game::run() {
             clearScreen();
 
             //TODO:打印函数：可以打印前言
+            player.showStatus();
 
+            std::cout << "\n(按回车键继续...)\n";
+            // 使用 std::cin.get() 来等待玩家按键，而不是 std::cin.ignore()
+            std::cin.get();
 
             explorationLoop();
             // 从探索循环退出后，清屏并重新显示Logo，回到主菜单
@@ -114,11 +118,11 @@ void Game::explorationLoop() {
 
         player.currentRoom->look();
         std::cout << std::endl;
-        player.showStatus();
+        //player.showStatus();
         std::cout << "----------------\n";
 
         // 3. 提示并获取玩家指令
-        std::cout << "输入指令 (如 'go north', 'look', 'inv', 'menu' , 'help', 'map', 'status'): \n> ";
+        std::cout << "输入指令 (如 'go north', 'look', 'inv', 'menu' , 'help', 'map', 'status', 'get'/'take'): \n> ";
         std::string command;
         // 使用 std::cin.ignore() 和 std::getline 来读取带空格的完整指令
        
@@ -126,7 +130,7 @@ void Game::explorationLoop() {
 
         // 4. 处理玩家指令
         if (command == "menu" || command == "quit" || command == "exit") {
-            isExploring = false; // 设置flag以退出探索循环
+            isExploring = false; 
             std::cout << "正在返回主菜单...\n";
             // 暂停一下让玩家看到信息
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -145,6 +149,7 @@ void Game::explorationLoop() {
         resetGame();
     }
 }
+
 
 //命令解释
 void Game::processExplorationInput(const std::string& input) {
@@ -179,6 +184,26 @@ void Game::processExplorationInput(const std::string& input) {
     }
     else if (command == "use") {
         player.useItem(argument);
+    }
+    else if (command == "take" || command == "get") {
+        if (argument.empty()) {
+            std::cout << "你想拾取什么？ (例如: take 生锈的剑)\n";
+        }
+        else {
+            // 从当前房间尝试移除物品
+            Item* itemToTake = player.currentRoom->removeItem(argument);
+
+            if (itemToTake != nullptr) {
+                // 如果成功，将物品添加到玩家背包
+                player.takeItem(*itemToTake);
+                // 重要：因为物品已经复制到玩家背包，需要释放原始物品的内存
+                delete itemToTake;
+            }
+            else {
+                // 如果失败，告知玩家
+                std::cout << "这里没有叫做 '" << argument << "' 的物品。\n";
+            }
+        }
     }
     else if (command == "help") {
 		showCommands();
@@ -255,10 +280,13 @@ void Game::showCommands() const {
 
     std::cout << "\n探索模式指令:\n";
     std::cout << "  go [north/south/east/west]: 向指定方向移动。\n";
-    std::cout << "  look: 查看地图。\n";
+    std::cout << "  take [物品名]: 拾取地上的物品。\n";
+    std::cout << "  look: 查看当前环境。\n"; // 将 look 的描述修正
     std::cout << "  status: 查看你的当前状态。\n";
     std::cout << "  inventory (或 inv): 查看你的背包。\n";
     std::cout << "  use [物品名]: 使用背包中的一个物品。\n";
+    std::cout << "  map: 查看世界地图。\n";
+    std::cout << "  menu: 返回主菜单。\n";
     std::cout << "--------------------\n";
 }
 

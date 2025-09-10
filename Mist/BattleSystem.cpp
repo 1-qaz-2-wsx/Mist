@@ -54,7 +54,7 @@ void BattleSystem::playerTurn(Player& player, Enemy& enemy) {
     }
     case 3:
         std::cout << "你决定逃跑...\n";
-        // 这里可以添加逃跑成功的几率判定
+        //TODO 这里可以添加逃跑成功的几率判定
         break;
     default:
         std::cout << "无效的输入，你犹豫了一下，失去了机会。\n";

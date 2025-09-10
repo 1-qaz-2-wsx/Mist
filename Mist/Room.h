@@ -24,7 +24,10 @@ public:
     ~Room(); // 需要析构函数来释放动态分配的内存
 
     void look() const;
-    void takeItem(Item* item);
-    
+    void takeItem(Item* item);// 这个函数名其实更适合叫 addItem
+    // 根据名称移除并返回物品指针，如果找不到则返回 nullptr
+    Item* removeItem(const std::string& itemName);
+
     std::string getName();
+
 };

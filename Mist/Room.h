@@ -9,6 +9,7 @@ class NPC;
 
 class Room {
 public:
+	//unsigned int id_; // 房间唯一标识符
     std::string description;
     std::map<std::string, Room*> exits;
 

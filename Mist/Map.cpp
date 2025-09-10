@@ -1,6 +1,8 @@
 ﻿#include "Map.h"
 #include "Enemy.h"
 #include "NPC.h"
+#include "SlowPrint.h"
+#include <iostream>
 
 Map::Map() : startRoom(nullptr) {}
 
@@ -48,3 +50,14 @@ void Map::build() {
 
     // 注意：这里动态分配的Item, Enemy, NPC需要在Room的析构函数中被delete
 }
+
+void Map::printMap() {
+	slowPrint("地图构建完成！你现在可以开始你的冒险了。\n",50);
+	slowPrint("当前地图:\n", 50);
+	std::cout << "[初始之地] -- 北 --> [低语森林] -- 北 --> [宁静空地]\n";
+	std::cout << "                     |                      \n";
+	std::cout << "                     南                     \n";
+    std::cout << "                     |                      \n";
+    std::cout << "                  [初始之地]                \n";
+}
+

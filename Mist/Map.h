@@ -13,4 +13,6 @@ public:
     ~Map(); // 析构函数释放所有房间的内存
 
     void build();
+    static void printMap();
+    std::string currentRoomDes() const;
 };

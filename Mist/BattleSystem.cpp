@@ -29,3 +29,4 @@ bool BattleSystem::startBattle(Player& player, Enemy& enemy) {
     std::cout << "--- 战斗结束! ---\n";
     return player.isAlive();
 }
+

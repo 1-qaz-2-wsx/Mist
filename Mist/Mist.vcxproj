@@ -141,6 +141,7 @@
     <ClCompile Include="NPC.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Room.cpp" />
+    <ClCompile Include="SlowPrint.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BattleSystem.h" />
@@ -151,6 +152,7 @@
     <ClInclude Include="NPC.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Room.h" />
+    <ClInclude Include="SlowPrint.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

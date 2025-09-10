@@ -3,6 +3,21 @@
 #include "Map.h"
 #include "Enemy.h"
 
+#include <iostream>  
+#include <sstream>  
+#include <string> 
+#include <conio.h>
+#include <bitset>
+#include <iostream>  
+#include <windows.h>  
+#include<vector>
+#include <assert.h>
+#include <map>
+
+#include "SlowPrint.h"
+
+
+
 class Game {
 private:
     Player player;
@@ -12,15 +27,25 @@ private:
 
     void showLogo() const;
     void showMainMenu();
-    void processPlayerInput(const std::string& input);
-    void explore();
+    void explorationLoop();
     void showCommands() const;
     void challengeMonster();
     void handleRoomInteraction();
     void resetGame();
+	//辅助函数，探索模式输入处理
+    void processExplorationInput(const std::string& input);
+    //清屏函数
+    void clearScreen() const;
 
 
 public:
     Game();
     void run();
 };
+
+
+
+
+
+
+

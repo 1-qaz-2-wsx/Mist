@@ -1,6 +1,8 @@
 ﻿// Game.cpp
 
 #include "Game.h"
+#include <algorithm>  //辅助修剪字符串
+
 
 // ----------------------------------------------------------------
 // 包含所有“同事类”和工具类的头文件
@@ -17,6 +19,18 @@
 #include <iostream>
 #include <string>
 #include <sstream> // 用于解析字符串输入
+
+
+// 辅助函数：修剪字符串两端的空格、制表符、换行符等 -->用于解决拾取逻辑中 字符串识别问题
+std::string trim(const std::string& str) {
+    const std::string WHITESPACE = " \t\n\r\f\v";
+    size_t first = str.find_first_not_of(WHITESPACE);
+    if (std::string::npos == first) {
+        return str; // 字符串全是空格
+    }
+    size_t last = str.find_last_not_of(WHITESPACE);
+    return str.substr(first, (last - first + 1));
+}
 
 // --- 构造/析构函数 ---
 
@@ -134,14 +148,18 @@ void Game::processPlayerInput() {
         handleLookCommand();
     }
     else if (command == "attack") {
-        std::string target;
-        ss >> target;
-        handleAttackCommand(target);
+        std::string argument;
+        std::getline(ss, argument); // 读取ss中剩余的全部内容
+        std::string targetName = trim(argument); // 用trim()清理参数
+        handleAttackCommand(targetName);
     }
     else if (command == "take" || command == "get") {
-        std::string item;
-        ss >> item;
-        handleTakeCommand(item);
+        std::string argument;
+        std::getline(ss, argument); // 读取ss中剩余的全部内容
+
+        std::string itemName = trim(argument); // 用trim()清理参数
+		std::cout<< itemName ;
+        handleTakeCommand(itemName);
     }
     else if (command == "inventory" || command == "inv" || command == "i") {
         handleInventoryCommand();

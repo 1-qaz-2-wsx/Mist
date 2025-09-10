@@ -9,6 +9,7 @@
 #include <chrono>       // 用于时间/延迟
 #include <thread>       // 用于线程休眠
 #include <conio.h>    // 为了使用 _kbhit() 和 _getch()
+#include <limits>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -99,6 +100,7 @@ void Game::showMainMenu() {
 
 void Game::explorationLoop() {
     bool isExploring = true;
+    std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
 
     // 第一次进入时，先进行一次房间互动检查（例如，如果起始房间有敌人）
     handleRoomInteraction();
@@ -119,7 +121,7 @@ void Game::explorationLoop() {
         std::cout << "输入指令 (如 'go north', 'look', 'inv', 'menu' , 'help', 'map', 'status'): \n> ";
         std::string command;
         // 使用 std::cin.ignore() 和 std::getline 来读取带空格的完整指令
-        std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
+       
         std::getline(std::cin, command);
 
         // 4. 处理玩家指令
@@ -184,9 +186,7 @@ void Game::processExplorationInput(const std::string& input) {
     else {
         std::cout << "未知的指令。\n";
     }
-    //// 暂停一下，让玩家看到指令执行的结果
-    //std::cout << "\n(按回车键继续...)\n";
-    //std::cin.get();
+
 }
 
 
@@ -211,6 +211,8 @@ void Game::handleRoomInteraction() {
             std::cout << "你被击败了...游戏结束。\n";
             // Game over logic handled in main loop
         }
+        std::cout << "\n(按回车键继续...)\n";
+        std::cin.get(); // 等待玩家按回车
     }
 
     // 遇NPC
@@ -221,6 +223,8 @@ void Game::handleRoomInteraction() {
             std::cout << "你从 " << room->npc->name << " 那里获得了: " << receivedItem.name << "!\n";
             player.takeItem(receivedItem);
         }
+        std::cout << "\n(按回车键继续...)\n";
+        std::cin.get();
     }
 }
 

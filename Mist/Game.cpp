@@ -35,7 +35,7 @@ void SetConsoleColor(int color) {
 Game::Game()
     : gameMap(),
     player(gameMap.startRoom),
-    mistMonster("迷雾怪物", 200, 25, 10, Item("迷雾核心", "一个强大的能量源", ItemEffect::ATTACK_BUFF, 20)),
+    mistMonster("迷雾怪物", 200, 25, 10, Item("迷雾核心", "一个强大的能量源", ItemType::CONSUMABLE, ItemEffect::ATTACK_BUFF, 20)),
     isRunning(true)
 {
     gameMap.build();
@@ -161,7 +161,7 @@ void Game::processExplorationInput(const std::string& input) {
     }
 
     if (command == "go") {
-        player.move(argument);
+        player.move(argument, this->gameMap);
     }
     else if (command == "map") {
 		Map::printMap();
@@ -184,7 +184,7 @@ void Game::processExplorationInput(const std::string& input) {
 		showCommands();
     }
     else {
-        std::cout << "未知的指令。\n";
+        std::cout << "未知的指令。输入 help 寻求帮助。\n";
     }
 
 }
@@ -226,7 +226,30 @@ void Game::handleRoomInteraction() {
         std::cout << "\n(按回车键继续...)\n";
         std::cin.get();
     }
+    //饭店
+    if (room->description.find("金碧辉煌的饭店") != std::string::npos) {
+        std::cout << "主理人：欢迎光临！要来点吃的恢复体力吗？ (y/n)\n";
+        char choice;
+        std::cin >> choice;
+        if (choice == 'y' || choice == 'Y') {
+            int cost = rand() % 20 + 10; // 随机价格 10-29
+            std::cout << "这顿饭需要 " << cost << " 。\n";
+            if (player.money >= cost) {
+                player.money -= cost;
+                player.stamina = player.maxStamina;
+                std::cout << "你吃得心满意足，体力完全恢复了！\n";
+            }
+            else {
+                std::cout << "你钱不够，主理人把你打了一顿！\n";
+                player.takeDamage(10); // 吃霸王餐被打
+                player.stamina = player.maxStamina;
+                std::cout << "虽然挨了打，但你还是吃饱了，体力恢复了。\n";
+            }
+        }
+    }
 }
+
+
 
 void Game::showCommands() const {
 

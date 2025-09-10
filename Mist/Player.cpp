@@ -1,28 +1,75 @@
 ﻿#include "Player.h"
 #include <iostream>
-
+#include <algorithm> // 需要包含 akgorithm 来使用 std::find_if
+#include "Map.h"
 Player::Player(Room* startRoom)
-    : maxHealth(100), health(100), attack(10), defense(5), currentRoom(startRoom) {}
+    : currentRoom(startRoom),
+    name("玩家"),
+    maxHealth(100),
+    health(100),
+    attack(10),
+    defense(5),
+    agility(5),
+    intelligence(5),
+    maxStamina(5),
+    stamina(5),
+    money(100),
+    weaponProficiency(0)
+{}
 
-void Player::move(const std::string& direction) {
+void Player::move(const std::string& direction, Map& gameMap) {
+    if (stamina <= 0) {
+        std::cout << "你太累了，无法移动。\n";
+        std::cout << "是否花费 5 G 传送至饭店恢复体力? (y/n)\n> ";
+        char choice;
+        std::cin >> choice;
+        if (choice == 'y' || choice == 'Y') {
+            if (money >= 5) {
+                money -= 5;
+                currentRoom = gameMap.hotelRoom; // 传送到饭店
+                std::cout << "你支付了 5 G，闪来将你传送到了【金碧辉煌的饭店】门口。\n";
+            }
+            else {
+                std::cout << "你的金钱不足，无法使用传送服务。\n";
+            }
+        }
+        return;
+    }
+
     auto it = currentRoom->exits.find(direction);
     if (it != currentRoom->exits.end()) {
         currentRoom = it->second;
-        std::cout << "你移动到了 " << direction << ".\n";
+        stamina--; // 移动消耗体力
+        std::cout << "你移动到了 " << currentRoom->getName() << "，消耗了1点体力。\n";
     }
     else {
         std::cout << "那个方向没有路。\n";
     }
 }
 
+
 void Player::takeItem(const Item& item) {
     inventory.push_back(item);
     std::cout << "你将 " << item.name << " 放入了背包。\n";
 }
-
+void Player::equipWeapon(const std::string& weaponName) {
+    for (const auto& item : inventory) {
+        if (item.name == weaponName && item.type == ItemType::WEAPON) {
+            equippedWeapon = item;
+            std::cout << "你装备了 " << weaponName << "。\n";
+            return;
+        }
+    }
+    std::cout << "你没有名为 '" << weaponName << "' 的武器。\n";
+}
 void Player::useItem(const std::string& itemName) {
     for (auto it = inventory.begin(); it != inventory.end(); ++it) {
         if (it->name == itemName) {
+            if (it->type == ItemType::WEAPON) {
+                equipWeapon(itemName); // 如果是武器，则装备它
+                return;
+            }
+
             std::cout << "你使用了 " << it->name << "。 " << it->description << "\n";
             switch (it->effect) {
             case ItemEffect::HEAL:
@@ -38,6 +85,10 @@ void Player::useItem(const std::string& itemName) {
                 defense += it->value;
                 std::cout << "你的防御力永久提升了 " << it->value << " 点。\n";
                 break;
+            case ItemEffect::WEAPON_PROFICIENCY_BUFF:
+                weaponProficiency += it->value;
+                std::cout << "你的武器熟练度提升了 " << it->value << " 点！\n";
+                break;
             }
             inventory.erase(it); // 使用后物品消失
             return;
@@ -49,10 +100,19 @@ void Player::useItem(const std::string& itemName) {
 void Player::showStatus() const {
     std::cout << "--- 玩家状态 ---\n";
     std::cout << "生命值: " << health << " / " << maxHealth << "\n";
+    std::cout << "体力:   " << stamina << " / " << maxStamina << "\n";
     std::cout << "攻击力: " << attack << "\n";
     std::cout << "防御力: " << defense << "\n";
+    std::cout << "敏捷:   " << agility << "\n";
+    std::cout << "智力:   " << intelligence << "\n";
+    std::cout << "武器熟练度: " << weaponProficiency << "\n";
+    std::cout << "金钱:   " << money << " G\n";
+    if (!equippedWeapon.name.empty()) {
+        std::cout << "装备中: " << equippedWeapon.name << "\n";
+    }
     std::cout << "------------------\n";
 }
+
 
 void Player::showInventory() const {
     std::cout << "--- 背包 ---\n";
@@ -76,4 +136,8 @@ void Player::takeDamage(int damage) {
     if (health < 0) {
         health = 0;
     }
+}
+
+int Player::calculateAttack() {
+    return attack + equippedWeapon.attackBonus + weaponProficiency;
 }

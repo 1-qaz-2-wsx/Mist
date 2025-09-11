@@ -24,7 +24,7 @@ void Room::look() const {
         std::cout << "你看到 " << npc->name << " 站在这里。\n";
     }
     if (!items.empty()) {
-        std::cout << "地上有以下物品:\n";
+        std::cout << "你有可能获得以下物品:\n";
         for (const auto& item : items) {
             std::cout << "- " << item->name << "\n";
         }

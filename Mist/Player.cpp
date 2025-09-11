@@ -14,7 +14,8 @@ Player::Player(Room* startRoom)
     maxStamina(5),
     stamina(5),
     money(100),
-    weaponProficiency(0)
+    weaponProficiency(0),
+    isUltimateCharged(false)
 {}
 
 void Player::move(const std::string& direction, Map& gameMap) {

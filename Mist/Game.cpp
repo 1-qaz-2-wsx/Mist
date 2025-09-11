@@ -4,6 +4,7 @@
 #include <string>
 #include "NPC.h"
 #include "Map.h"
+#include "SlowPrint.h"
 #include <vector>
 #include <bitset>       // 用于处理位操作
 #include <chrono>       // 用于时间/延迟
@@ -57,10 +58,12 @@ void Game::run() {
             clearScreen();
 
             //TODO:打印函数：可以打印前言
+            std::string message;
+            message = "无尽的迷雾吞噬了一切，你孤身一人迷失其中。\n记忆模糊，只剩下两个念头：生存，以及找到迷雾的源头并摧毁它。\n你将探索废墟、森林和古老遗迹，与邪恶的生物战斗，寻找散落的线索和强大的装备。\n每一个转角都可能隐藏着未知的危险，或是一线生机。\n你的每一个选择，都将决定你的命运。\n准备好了吗，探险家？\n迷雾的世界在等待着你。\n";
+            slowPrint(message, 10);
             player.showStatus();
 
             std::cout << "\n(按回车键继续...)\n";
-            // 使用 std::cin.get() 来等待玩家按键，而不是 std::cin.ignore()
             std::cin.get();
 
             explorationLoop();
@@ -69,6 +72,8 @@ void Game::run() {
             showLogo();
         }
         else if (choice == "2") {
+            clearScreen();
+
             showCommands();
         }
         else if (choice == "3") {
@@ -76,6 +81,7 @@ void Game::run() {
             std::cout << "感谢游玩《Mist Monster》。\n";
         }
         else if (choice == "4") {
+            clearScreen();
             challengeMonster();
         }
         else {
@@ -122,7 +128,8 @@ void Game::explorationLoop() {
         std::cout << "----------------\n";
 
         // 3. 提示并获取玩家指令
-        std::cout << "输入指令 (如 'go north', 'look', 'inv', 'menu' , 'help', 'map', 'status', 'get'/'take'): \n> ";
+        std::cout << "通过输入以下指令进行探索发育(help 查看指令说明)：\n";
+        std::cout << "'go [direction]', 'look', 'inv', 'menu' , 'quit' , 'help' , 'map', 'status' , 'take [item]' , 'Mist'): \n> ";
         std::string command;
         // 使用 std::cin.ignore() 和 std::getline 来读取带空格的完整指令
        
@@ -140,6 +147,7 @@ void Game::explorationLoop() {
             // 每次行动后，都检查是否触发了房间互动（如进入有怪的房间）
             handleRoomInteraction();
         }
+
     }
 
     // 如果玩家死亡，则重置游戏状态
@@ -167,13 +175,19 @@ void Game::processExplorationInput(const std::string& input) {
 
     if (command == "go") {
         player.move(argument, this->gameMap);
+
     }
+
     else if (command == "map") {
 		Map::printMap();
+		std::cout << "\n(按回车键继续...)\n";
+		std::cin.get(); // 等待玩家按回车
     }
     else if (command == "look") {
         // 'look' 的功能已在循环开始时自动执行
         player.currentRoom->look();
+		std::cout << "\n(按回车键继续...)\n";
+		std::cin.get(); // 等待玩家按回车
     }
     else if (command == "status") {
         // 'status' 的功能也已自动执行，但同样允许手动查看
@@ -184,10 +198,11 @@ void Game::processExplorationInput(const std::string& input) {
     }
     else if (command == "use") {
         player.useItem(argument);
+
     }
     else if (command == "take" || command == "get") {
         if (argument.empty()) {
-            std::cout << "你想拾取什么？ (例如: take 生锈的剑)\n";
+            std::cout << "你想拾取什么？\n";
         }
         else {
             // 从当前房间尝试移除物品
@@ -205,6 +220,25 @@ void Game::processExplorationInput(const std::string& input) {
             }
         }
     }
+
+	else if (command == "Mist" || command == "mist") {
+        slowPrint("你感受到一股神秘的力量在召唤你去挑战迷雾怪物……\n",50);
+        slowPrint("如果你觉得自己已经足够强大，可以选择挑战它！\n", 50);
+		player.showStatus();
+        player.showInventory();
+
+		slowPrint("你确定要现在就挑战迷雾怪物吗？ (y/n): ", 50);
+		char choice;
+		std::cin >> choice;
+		std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n'); // 清除输入缓冲区
+		if (choice == 'y' || choice == 'Y') {
+			challengeMonster();
+		}
+		else {
+			std::cout << "你决定暂时不挑战迷雾怪物，继续你的探索发育之旅。\n";
+		}
+	}
+
     else if (command == "help") {
 		showCommands();
     }
@@ -222,22 +256,34 @@ void Game::handleRoomInteraction() {
     if (room->enemy != nullptr) {
         std::cout << "\n你遇到了 " << room->enemy->name << "!\n";
         BattleSystem battle;
-        bool playerWon = battle.startBattle(player, *room->enemy);
+        BattleResult result = battle.startBattle(player, *room->enemy); // 接收新的返回值
+        
 
-        if (playerWon) {
+        switch (result) {
+        case BattleResult::WIN: {
             std::cout << "你击败了 " << room->enemy->name << "!\n";
             Item droppedLoot = room->enemy->loot;
-            std::cout << "你获得了物品: " << droppedLoot.name << ".\n";
-            player.takeItem(droppedLoot);
-            delete room->enemy; // 怪物被打败后从房间移除
+            if (!droppedLoot.name.empty()) { // 检查是否有掉落物
+                std::cout << "你获得了物品: " << droppedLoot.name << ".\n";
+                player.takeItem(droppedLoot);
+            }
+            delete room->enemy;
             room->enemy = nullptr;
+            std::cout << "\n(按回车键继续...)\n";
+            std::cin.get();
+            break;
         }
-        else {
-            std::cout << "你被击败了...游戏结束。\n";
-            // Game over logic handled in main loop
+        case BattleResult::LOSS: {
+            // 游戏结束的逻辑已经在主探索循环中处理，这里可以留空或只显示消息
+            std::cout << "你被击败了...\n";
+            break;
         }
-        std::cout << "\n(按回车键继续...)\n";
-        std::cin.get(); // 等待玩家按回车
+        case BattleResult::FLED: {
+            std::cout << "你回到了"<< player.currentRoom->getName() <<"心有余悸。\n";
+            // 逃跑成功，不做任何事，直接回到探索循环
+            break;
+        }
+        }
     }
 
     // 遇NPC
@@ -291,11 +337,11 @@ void Game::showCommands() const {
 }
 
 void Game::challengeMonster() {
-    std::cout << "你鼓起勇气，决定挑战最终的迷雾怪物！\n";
+    slowPrint("你鼓起勇气，决定挑战最终的迷雾怪物！挑战成功，则逃脱迷雾，若失败，则永久迷失……\n", 30);
     BattleSystem battle;
-    bool playerWon = battle.startBattle(player, mistMonster);
+	BattleResult result = battle.startBattle(player, mistMonster);
 
-    if (playerWon) {
+    if (result == BattleResult::WIN) {
         std::cout << "\n****************************************\n";
         std::cout << "你成功击败了迷雾怪物！浓雾散去，你找到了出路。\n";
         std::cout << "结局：【逃脱】\n";

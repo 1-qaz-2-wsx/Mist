@@ -23,6 +23,8 @@ public:
     int weaponProficiency; // 武器熟练度
     Item equippedWeapon; // 当前装备的武器
 
+    bool isUltimateCharged; // 是否已蓄力准备放大招
+
     Room* currentRoom;
     std::vector<Item> inventory;
 

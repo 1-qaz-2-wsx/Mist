@@ -1,0 +1,42 @@
+{
+    "player": {
+        "agility": 5,
+        "attack": 10,
+        "currentRoomName": "金碧辉煌的饭店",
+        "defense": 5,
+        "health": 90,
+        "intelligence": 5,
+        "inventory": [
+            "生命药水",
+            "使用手册",
+            "重剑"
+        ],
+        "maxHealth": 100,
+        "maxStamina": 5,
+        "money": 85,
+        "name": "玩家",
+        "stamina": 5,
+        "weaponProficiency": 0
+    },
+    "worldState": {
+        "低语森林": {
+            "hasEnemy": false,
+            "items": []
+        },
+        "初始之地": {
+            "hasEnemy": false,
+            "items": [
+                "猎枪",
+                "法杖"
+            ]
+        },
+        "宁静空地": {
+            "hasEnemy": false,
+            "items": []
+        },
+        "金碧辉煌的饭店": {
+            "hasEnemy": false,
+            "items": []
+        }
+    }
+}

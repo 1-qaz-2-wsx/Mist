@@ -21,12 +21,6 @@
     <ClCompile Include="Mist.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Stats.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Item.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -36,16 +30,7 @@
     <ClCompile Include="Enemy.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ItemDatabase.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyDatabase.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Room.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="RoomDatebase.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Map.cpp">
@@ -57,17 +42,14 @@
     <ClCompile Include="BattleSystem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Exit.cpp">
+    <ClCompile Include="NPC.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SlowPrint.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Entity.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Stats.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Item.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -77,19 +59,7 @@
     <ClInclude Include="Enemy.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ItemDatabase.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyDatabase.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Room.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="RoomDatabase.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="json.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Map.h">
@@ -101,34 +71,14 @@
     <ClInclude Include="BattleSystem.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Exit.h">
+    <ClInclude Include="NPC.h">
       <Filter>头文件</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="rooms.json">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="map.json">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="items.json">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="enymies.json">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="data\enemies.json">
-      <Filter>Data</Filter>
-    </None>
-    <None Include="data\items.json">
-      <Filter>Data</Filter>
-    </None>
-    <None Include="data\map.json">
-      <Filter>Data</Filter>
-    </None>
-    <None Include="data\rooms.json">
-      <Filter>Data</Filter>
-    </None>
+    <ClInclude Include="SlowPrint.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\savage\Desktop\json.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

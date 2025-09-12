@@ -36,6 +36,9 @@ private:
     void processExplorationInput(const std::string& input);
     //清屏函数
     void clearScreen() const;
+    //读存档
+    void saveGame() const;
+    bool loadGame(); // 返回 bool 表示是否加载成功
 
 
 public:

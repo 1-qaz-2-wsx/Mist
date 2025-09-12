@@ -30,7 +30,7 @@ public:
 
     Player(Room* startRoom);
 
-    void move(const std::string& direction, Map& gameMap);
+    bool move(const std::string& direction, Map& gameMap);
     void takeItem(const Item& item);
     void useItem(const std::string& itemName);
     void equipWeapon(const std::string& weaponName); // 装备武器

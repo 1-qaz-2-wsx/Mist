@@ -18,7 +18,7 @@ Player::Player(Room* startRoom)
     isUltimateCharged(false)
 {}
 
-void Player::move(const std::string& direction, Map& gameMap) {
+bool Player::move(const std::string& direction, Map& gameMap) {
     if (stamina <= 0) {
         std::cout << "你太累了，无法移动。\n";
         std::cout << "是否花费 5 G 传送至饭店恢复体力? (y/n)\n> ";
@@ -33,8 +33,10 @@ void Player::move(const std::string& direction, Map& gameMap) {
             else {
                 std::cout << "你的金钱不足，无法使用传送服务。\n";
             }
+            std::cout << "\n(按回车键继续...)\n";
+            std::cin.get(); // 等待玩家按回车
         }
-        return;
+        return false; // 移动失败
     }
 
     auto it = currentRoom->exits.find(direction);
@@ -42,9 +44,12 @@ void Player::move(const std::string& direction, Map& gameMap) {
         currentRoom = it->second;
         stamina--; // 移动消耗体力
         std::cout << "你移动到了 " << currentRoom->getName() << "，消耗了1点体力。\n";
+        return true; // 移动成功
     }
     else {
         std::cout << "那个方向没有路。\n";
+        return false; // 移动失败
+
     }
 }
 

@@ -30,6 +30,7 @@ void Room::look() const {
         }
     }
 
+
     std::cout << "你可以前往的方向: ";
     for (const auto& exit : exits) {
         std::cout << exit.first << " ";

@@ -126,6 +126,19 @@ void BattleSystem::playerTurn(Player& player, Enemy& enemy) {
         else if (command == "use") {
             player.useItem(argument);
         }
+        else if (command == "help") {
+            std::cout << "可用指令:\n";
+            std::cout << "  attack          普通攻击敌人\n";
+            std::cout << "  run             尝试逃跑\n";
+            std::cout << "  use [物品名]    使用背包中的物品\n";
+            if (player.weaponProficiency >= 5) {
+                std::cout << "  retain         蓄力准备释放大招，但你需要静止一回合。\n";
+            }
+            if (player.isUltimateCharged) {
+                std::cout << "  bang           释放大招对敌人造成巨大伤害\n";
+            }
+            std::cout << "  help           显示此帮助信息\n";
+        }
         else {
             std::cout << "无效的输入，你犹豫了一下，失去了机会。\n";
         }

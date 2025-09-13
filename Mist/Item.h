@@ -14,7 +14,9 @@ enum class ItemEffect {
     HEAL,
     ATTACK_BUFF,
     DEFENSE_BUFF,
-    WEAPON_PROFICIENCY_BUFF // 新增：武器熟练度提升
+    AGILITY_BUFF,
+    INTELLIGENCE_BUFF,
+    WEAPON_PROFICIENCY_BUFF
 };
 
 class Item {

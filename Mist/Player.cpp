@@ -5,14 +5,14 @@
 Player::Player(Room* startRoom)
     : currentRoom(startRoom),
     name("玩家"),
-    maxHealth(100),
+	maxHealth(150), //修改初始最大生命值为150
     health(100),
     attack(10),
     defense(5),
     agility(5),
     intelligence(5),
     maxStamina(5),
-    stamina(5),
+    stamina(8),
     money(100),
     weaponProficiency(0),
     isUltimateCharged(false)
@@ -94,6 +94,13 @@ void Player::useItem(const std::string& itemName) {
             case ItemEffect::WEAPON_PROFICIENCY_BUFF:
                 weaponProficiency += it->value;
                 std::cout << "你的武器熟练度提升了 " << it->value << " 点！\n";
+            case ItemEffect::AGILITY_BUFF:
+                agility += it->value;
+                std::cout << "你的敏捷提升了 " << it->value << " 点！\n";
+                break;
+            case ItemEffect::INTELLIGENCE_BUFF:
+                intelligence += it->value;
+                std::cout << "你的智力提升了 " << it->value << " 点！\n";
                 break;
             }
             inventory.erase(it); // 使用后物品消失

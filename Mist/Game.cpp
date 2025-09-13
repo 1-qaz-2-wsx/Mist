@@ -151,22 +151,31 @@ void Game::explorationLoop() {
 
 
     while (isExploring && player.isAlive()) {
+        // 清屏
+        clearScreen();
 
         // 2. 显示当前环境和状态
         SetConsoleColor(11); // 亮青色
         std::cout << "--- 探索模式 ，如要结束探索 menu 可返回主菜单，在主菜单中可保存进度---\n";
         SetConsoleColor(15); // 白色
 		std::cout << "你现在在: " << player.currentRoom->getName() << "\n";
-		player.currentRoom->look();
+		//player.currentRoom->look();
         std::cout << std::endl;
         //player.showStatus();
         std::cout << "----------------\n";
 
         // 3. 提示并获取玩家指令
         SetConsoleColor(10); // 亮绿色
-        std::cout << "通过输入以下指令进行探索发育（help 查看指令说明）：\n";   
-        std::cout << "'go [direction]' , 'take [item]' , 'look', 'status' , 'inv', 'use [你的物品]' , 'map',  'Mist' , 'menu' , 'help'): \n> ";
+        std::cout << "通过输入以下指令进行探索发育，look观察周围环境，触发遭遇！（help 查看指令说明）：\n";   
+        std::cout << "'go [direction]' , 'take [item]' , 'look', 'status' , 'inv', 'use [你的物品]' , 'map',  'Mist' , 'menu' , 'help'): \n ";
         SetConsoleColor(15); // 白色
+
+
+        //player.currentRoom->look();
+        SetConsoleColor(10); // 亮绿色
+        std::cout <<">";
+        SetConsoleColor(15); // 白色
+
 
         std::string command;
         // 使用 std::cin.ignore() 和 std::getline 来读取带空格的完整指令
@@ -185,13 +194,12 @@ void Game::explorationLoop() {
         else {
             processExplorationInput(command);
             // 每次行动后，都检查是否触发了房间互动（如进入有怪的房间）  go 指令------------------------------------------------------->修复NPC对话反复弹出问题
-            if (command == "go" || command == "look")
+            if (command == "go" ||command == "move" || command == "look")
             {
                 handleRoomInteraction();
             }
         }
-		// 清屏，准备下一轮循环
-        clearScreen();
+		
    
     }
 
@@ -226,9 +234,9 @@ void Game::processExplorationInput(const std::string& input) {
         std::cin.get(); // 等待玩家按回车
     }
     else if (command == "map") {
-        Map::printMap();
+        gameMap.printMap(); // 从 Map::printMap() 改为 gameMap.printMap()
         std::cout << "\n(按回车键继续...)\n";
-        std::cin.get(); // 等待玩家按回车
+        std::cin.get();
     }
     else if (command == "look") {
         // 'look' 的功能已在循环开始时自动执行
@@ -271,6 +279,8 @@ void Game::processExplorationInput(const std::string& input) {
                 std::cout << "这里没有 '" << argument << "\n";
             }
         }
+        std::cout << "\n(按回车键继续...)\n";
+        std::cin.get(); // 等待玩家按回车
     }
 
     else if (command == "Mist" || command == "mist") {
@@ -289,6 +299,8 @@ void Game::processExplorationInput(const std::string& input) {
         else {
             std::cout << "你决定暂时不挑战迷雾怪物，继续你的探索发育之旅。\n";
         }
+        std::cout << "\n(按回车键继续...)\n";
+        std::cin.get(); // 等待玩家按回车
     }
 
     else if (command == "help") {
@@ -298,6 +310,8 @@ void Game::processExplorationInput(const std::string& input) {
     }
     else {
         std::cout << "未知的指令。输入 help 寻求帮助。\n";
+        std::cout << "\n(按回车键继续...)\n";
+        std::cin.get(); // 等待玩家按回车
     }
 
 }

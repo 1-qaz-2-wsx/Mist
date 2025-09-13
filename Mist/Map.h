@@ -7,7 +7,8 @@
 class Map {
 public:
     std::vector<Room*> allRooms; // 用于管理所有房间的内存
-
+    // *** 新增：用于存储地图美术字的成员变量 ***
+    std::string mapArt;
 public:
     Room* startRoom;
     Room* hotelRoom;
@@ -21,5 +22,8 @@ public:
     Item getItemFromDatabase(const std::string& itemName) const; // 从数据库获取物品
 
     void build();
-    static void printMap();
+    // *** 新增：从文件加载地图的函数 ***
+    void loadMapFromFile(const std::string& filePath);
+    // *** 修改：将 printMap 变为非静态成员函数 ***
+    void printMap() const;
 };

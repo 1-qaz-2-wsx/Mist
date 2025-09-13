@@ -5,6 +5,7 @@
 #include "NPC.h"
 #include "Map.h"
 #include "SlowPrint.h"
+#include "TicTacToeGame.h" // *** 包含井字棋游戏的头文件 ***
 #include "json.hpp"     // *** 新增：JSON库头文件，确保它在你的项目中 ***
 
 #include <vector>
@@ -19,6 +20,7 @@
 using json = nlohmann::json;
 
 #ifdef _WIN32
+
 #include <windows.h>
 #endif
 
@@ -167,14 +169,10 @@ void Game::explorationLoop() {
         // 3. 提示并获取玩家指令
         SetConsoleColor(10); // 亮绿色
         std::cout << "通过输入以下指令进行探索发育，look观察周围环境，触发遭遇！（help 查看指令说明）：\n";   
-        std::cout << "'go [direction]' , 'take [item]' , 'look', 'status' , 'inv', 'use [你的物品]' , 'map',  'Mist' , 'menu' , 'help'): \n ";
+        std::cout << "'go [direction]' , 'take [item]' , 'look', 'status' , 'inv', 'use [你的物品]' , 'map',  'Mist' , 'menu' , 'help'): \n>";
         SetConsoleColor(15); // 白色
 
 
-        //player.currentRoom->look();
-        SetConsoleColor(10); // 亮绿色
-        std::cout <<">";
-        SetConsoleColor(15); // 白色
 
 
         std::string command;
@@ -370,14 +368,46 @@ void Game::handleRoomInteraction() {
 
     // 遇NPC
     if (room->npc != nullptr) {
-        SetConsoleColor(9); // 亮蓝色
-        room->npc->talk();
-        if (!room->npc->hasGivenItem) {
-            Item receivedItem = room->npc->giveItem();
-            std::cout << "你从 " << room->npc->name << " 那里获得了: " << receivedItem.name << "!\n";
-            player.takeItem(receivedItem);
+
+        // *** 针对柯洁的特殊逻辑 ***
+        if (room->npc->name == "柯洁") {
+            if (!room->npc->hasGivenItem) {
+                room->npc->talk();
+                std::cout << "你是否要接受挑战？ (y/n)\n> ";
+                char choice;
+                std::cin >> choice;
+                //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                if (choice == 'y' || choice == 'Y') {
+                    TicTacToeGame game;
+                    if (game.playGame()) { // 如果玩家赢了
+                        std::cout << "柯洁赞许地看着你：“不错，这是你应得的奖励。”\n";
+                        player.takeItem(gameMap.getItemFromDatabase("阿尔法狗"));
+                        player.health += 10;
+                        if (player.health > player.maxHealth) player.health = player.maxHealth;
+                        std::cout << "你的生命值恢复了10点！\n";
+                        room->npc->hasGivenItem = true; // 标记奖励已给出
+                    }
+                    else {
+                        std::cout << "柯洁摇了摇头：“看来你还需多加磨练。”\n";
+                    }
+                }
+            }
+            else {
+                std::cout << "柯洁说：“我们已经分出胜负了。”\n";
+            }
         }
-        SetConsoleColor(15); // 白色
+        // *** 其他普通NPC的逻辑 ***
+
+        else{
+            SetConsoleColor(9); // 亮蓝色
+            room->npc->talk();
+            if (!room->npc->hasGivenItem) {
+                Item receivedItem = room->npc->giveItem();
+                std::cout << "你从 " << room->npc->name << " 那里获得了: " << receivedItem.name << "!\n";
+                player.takeItem(receivedItem);
+            }
+            SetConsoleColor(15); // 白色
+        }
         std::cout << "\n(按回车键继续...)\n";
         std::cin.get();
     }

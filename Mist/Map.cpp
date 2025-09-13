@@ -24,6 +24,7 @@ void Map::buildItemDatabase() {
     itemDatabase["月光珍珠"] = Item("月光珍珠", "闪耀着月色的珍珠，使用后永久提升10点智力。", ItemType::CONSUMABLE, ItemEffect::INTELLIGENCE_BUFF, 10);
     itemDatabase["沼泽毒牙"] = Item("沼泽毒牙", "带有剧毒的獠牙，使用后永久提升10点攻击力。", ItemType::CONSUMABLE, ItemEffect::ATTACK_BUFF, 10);
     itemDatabase["使用手册"] = Item("使用手册", "阅读后提升武器熟练度", ItemType::CONSUMABLE, ItemEffect::WEAPON_PROFICIENCY_BUFF, 5);
+    itemDatabase["阿尔法狗"] = Item("阿尔法狗", "一个蕴含超强算力的核心，似乎能让你的思维更敏捷。", ItemType::CONSUMABLE, ItemEffect::INTELLIGENCE_BUFF, 10);
 
     // 武器类物品（需传入武器伤害参数，对应 Item 构造的第6个参数）
     itemDatabase["生锈的剑"] = Item("生锈的剑", "增加10点攻击力", ItemType::WEAPON, ItemEffect::ATTACK_BUFF, 0, 10);
@@ -110,6 +111,7 @@ void Map::build() {
     Item* wisdomScroll = new Item(getItemFromDatabase("沼泽毒牙"));
     Item* swiftRune = new Item(getItemFromDatabase("迅捷符文"));
     Item* ghoulClaw = new Item(getItemFromDatabase("食尸鬼的利爪"));
+	Item* alphaDog = new Item(getItemFromDatabase("阿尔法狗"));
 
 
     // 2. 创建房间
@@ -123,6 +125,9 @@ void Map::build() {
     Room* r6 = new Room("月光湖畔", "银色月光洒在【月光湖畔】，湖水波光粼粼。");
     Room* r7 = new Room("黑暗沼泽", "【黑暗沼泽】散发着腐败的气息，空气中带着剧毒。");
     Room* r8 = new Room("荒芜高地", "你登上【荒芜高地】，寒风呼啸，视野极为开阔。");
+    // *** 新增房间 ***
+    Room* brainRoom = new Room("小强大脑", "这是一个充满未来感的房间，中央坐着一个年轻人，眼神锐利。他就是【柯洁】。");
+
 
     // 3. 创建生物 (Loot现在直接从数据库获取)
     Enemy* goblin = new Enemy("哥布林", 40, 10, 2, *goblinLoot);
@@ -132,6 +137,8 @@ void Map::build() {
     NPC* oldMan = new NPC("老人", "年轻人，这瓶药水你拿去吧，路上要小心。", *healthPotion);
     NPC* scholar = new NPC("神秘学者", "……原来有人能来到这里。这本手册交给你，好好使用吧。", *manual);
     NPC* moonMaiden = new NPC("月光少女", "月色可以洗炼心灵，这颗珍珠赠与你。", *moonPearl);
+    // *** 新增NPC (他给的物品是占位符，因为奖励是通过游戏胜利获得的) ***
+    NPC* keJie = new NPC("柯洁", "想从我这里拿到宝物？先在棋盘上赢过我再说。", Item());
 
     // 4. 将生物和物品放入房间
     r1->takeItem(huntingGun);
@@ -147,6 +154,7 @@ void Map::build() {
     r6->npc = moonMaiden;
     r7->enemy = swampBeast;
     r8->enemy = highlandDrake;
+	brainRoom->npc = keJie; // *** 将柯洁放入新房间 ***
 
 
     // 5. 连接房间
@@ -169,6 +177,8 @@ void Map::build() {
     r7->exits["west"] = r4;
     r8->exits["west"] = hotel;
     r8->exits["north"] = r5;
+	r8->exits["south"] = brainRoom;
+	brainRoom->exits["north"] = r8;
 
     // 6. 设置起点
     startRoom = r1;
@@ -183,6 +193,7 @@ void Map::build() {
     allRooms.push_back(r6);
     allRooms.push_back(r7);
     allRooms.push_back(r8);
+	allRooms.push_back(brainRoom); 
 
 }
 

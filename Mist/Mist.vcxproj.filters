@@ -48,6 +48,9 @@
     <ClCompile Include="SlowPrint.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="TicTacToeGame.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Item.h">
@@ -78,6 +81,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\savage\Desktop\json.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TicTacToeGame.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

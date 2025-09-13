@@ -94,13 +94,14 @@ void Player::useItem(const std::string& itemName) {
             case ItemEffect::WEAPON_PROFICIENCY_BUFF:
                 weaponProficiency += it->value;
                 std::cout << "你的武器熟练度提升了 " << it->value << " 点！\n";
+                break;
             case ItemEffect::AGILITY_BUFF:
                 agility += it->value;
                 std::cout << "你的敏捷提升了 " << it->value << " 点！\n";
                 break;
             case ItemEffect::INTELLIGENCE_BUFF:
                 intelligence += it->value;
-                std::cout << "你的智力提升了 " << it->value << " 点！\n";
+                std::cout << "你感觉头脑清明，智力永久提升了 " << it->value << " 点！\n";
                 break;
             }
             inventory.erase(it); // 使用后物品消失

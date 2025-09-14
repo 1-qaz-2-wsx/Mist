@@ -48,7 +48,7 @@ void BattleSystem::playerTurn(Player& player, Enemy& enemy) {
         std::cout << "魂灵已附身武器！输入 'bang' 释放大招，或 'use' 使用物品。\n> ";
     }
     else {
-        std::cout << "输入指令: 'attack', 'run', 'use' [物品名]";
+        std::cout << "输入指令: 'attack', 'run', 'use' [物品名], help(查看指令介绍手册)";
         if (player.weaponProficiency >= 5) {
             std::cout << ", 'retain'";
         }

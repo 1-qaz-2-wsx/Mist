@@ -90,12 +90,12 @@ void Game::run() {
             std::cout << "感谢游玩《Mist Monster》。\n";
             SetConsoleColor(15); // 白色
         }
-        else if (choice == "4") {
+        /*else if (choice == "4") {
             clearScreen();
             challengeMonster();
-        }
+        }*/
 
-        else if (choice == "5") {
+        else if (choice == "4") {
             if (loadGame()) {
                 std::cout << "存档加载成功！\n";
                 explorationLoop(); // 加载成功后直接进入探索
@@ -107,7 +107,7 @@ void Game::run() {
                 std::cout << "加载失败，存档文件不存在或已损坏。\n";
             }
         }
-        else if (choice == "6") {
+        else if (choice == "5") {
             saveGame();
             std::cout << "游戏进度已保存。\n";
         }
@@ -135,12 +135,12 @@ void Game::showLogo() const {
 }
 
 void Game::showMainMenu() {
-    std::cout << "1. 开始新游戏\n";
-    std::cout << "2. 查看指令\n";
+    std::cout << "1. 开始新游戏，进入探索发育模式\n";
+    std::cout << "2. 查看游戏说明\n";
     std::cout << "3. 退出游戏\n";
-    std::cout << "4. 挑战迷雾怪物\n";
-    std::cout << "5. 继续游戏 (加载存档)\n";
-    std::cout << "6. 保存进度\n"; // 添加保存选项
+    //std::cout << "4. 挑战迷雾怪物\n";
+    std::cout << "4. 继续游戏 (加载存档)\n";
+    std::cout << "5. 保存进度（以便下次从当前状态开始）\n"; // 添加保存选项
 }
 
 void Game::explorationLoop() {
@@ -161,7 +161,7 @@ void Game::explorationLoop() {
         std::cout << "--- 探索模式 ，如要结束探索 menu 可返回主菜单，在主菜单中可保存进度---\n";
         SetConsoleColor(15); // 白色
 		std::cout << "你现在在: " << player.currentRoom->getName() << "\n";
-		//player.currentRoom->look();
+		player.currentRoom->look();
         std::cout << std::endl;
         //player.showStatus();
         std::cout << "----------------\n";
@@ -169,7 +169,7 @@ void Game::explorationLoop() {
         // 3. 提示并获取玩家指令
         SetConsoleColor(10); // 亮绿色
         std::cout << "通过输入以下指令进行探索发育，look观察周围环境，触发遭遇！（help 查看指令说明）：\n";   
-        std::cout << "'go [direction]' , 'take [item]' , 'look', 'status' , 'inv', 'use [你的物品]' , 'map',  'Mist' , 'menu' , 'help'): \n>";
+        std::cout << "'look', 'go [direction]' , 'take [item]' , 'status' , 'inv', 'use [你的物品]' , 'map',  'Mist' , 'menu' , 'help'): \n>";
         SetConsoleColor(15); // 白色
 
 
@@ -473,9 +473,11 @@ void Game::showCommands() const {
     SetConsoleColor(11); // 亮青色
     std::cout << "\n探索模式指令:\n";
     SetConsoleColor(15); // 白色
+	std::cout << "--------------------\n";
+    std::cout << "在这个游戏中，你需要在探索模式中不断精进自己，只有击败最终的迷雾怪物，才能【逃脱】，否则【迷失】\n";
     std::cout << "  go [north/south/east/west/n/s/w/e]: 向指定方向移动。\n";
     std::cout << "  take [物品名]: 拾取地上的物品。\n";
-    std::cout << "  look: 查看当前环境。\n"; // 将 look 的描述修正
+    std::cout << "  look: 查看当前环境。在每到一个新的环境，你【必须】look观察环境来获取信息，包括【你可以走的方向】【你可能获得的物品】【你可能遭遇的事件】\n"; // 将 look 的描述修正
     std::cout << "  status: 查看你的当前状态。\n";
     std::cout << "  inventory (或 inv): 查看你的背包。\n";
     std::cout << "  use [物品名]: 使用背包中的一个物品。\n";

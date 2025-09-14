@@ -227,6 +227,16 @@ void Game::processExplorationInput(const std::string& input) {
     }
 
     if (command == "go") {
+
+        if (argument == "n") {
+			argument = "north";
+		}
+		else if (argument == "s") { argument = "south"; }
+		else if (argument == "e") { argument = "east"; }
+        else if (argument == "w") {
+            argument = "west";
+        }
+
         player.move(argument, this->gameMap);
         std::cout << "\n(按回车键继续...)\n";
         std::cin.get(); // 等待玩家按回车
@@ -463,7 +473,7 @@ void Game::showCommands() const {
     SetConsoleColor(11); // 亮青色
     std::cout << "\n探索模式指令:\n";
     SetConsoleColor(15); // 白色
-    std::cout << "  go [north/south/east/west]: 向指定方向移动。\n";
+    std::cout << "  go [north/south/east/west/n/s/w/e]: 向指定方向移动。\n";
     std::cout << "  take [物品名]: 拾取地上的物品。\n";
     std::cout << "  look: 查看当前环境。\n"; // 将 look 的描述修正
     std::cout << "  status: 查看你的当前状态。\n";

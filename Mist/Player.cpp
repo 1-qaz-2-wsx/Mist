@@ -11,7 +11,7 @@ Player::Player(Room* startRoom)
     defense(5),
     agility(5),
     intelligence(5),
-    maxStamina(5),
+    maxStamina(8),
     stamina(8),
     money(100),
     weaponProficiency(0),

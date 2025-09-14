@@ -61,29 +61,29 @@ void Map::loadMapFromFile(const std::string& filePath) {
     else {
         // 如果文件加载失败，提供一个默认的硬编码地图作为备用
         mapArt = "[地图文件 map.txt 加载失败]\n";
-        std::cout << "        +------------------+\n";
-        std::cout << "        |    宁静空地      |\n";
-        std::cout << "        |                  |\n";
-        std::cout << "        +------------------+\n";
-        std::cout << "                | \n";
-        std::cout << "                |\n";
-        std::cout << "+------------------+         +------------------+         +------------------+ \n";
-        std::cout << "|    低语森林      |-------->|    神秘洞穴      |-------->|    黑暗沼泽      |\n";
-        std::cout << "|                  |         |                  |         |                  |\n";
-        std::cout << "+------------------+         +------------------+         +------------------+\n";
-        std::cout << "        |                            | \n";
-        std::cout << "        | 北                         |\n";
-        std::cout << "+------------------+         +------------------+         +------------------+\n";
-        std::cout << "|  初始之地        |-------->|    废弃矿洞      |-------->|  月光湖畔        |\n";
-        std::cout << "|                  |   东    |                  |         |                  |\n";
-        std::cout << "+------------------+         +------------------+         +------------------+ \n";
-        std::cout << "        | 南                             |   \n";
-        std::cout << "        |                                |\n";
-        std::cout << "+----------------------+           +-------------------+\n";
-        std::cout << "| 金碧辉煌的饭店(hotel)|---------->|    荒芜高地       |\n";
-        std::cout << "|                      |           |                   |\n";
-        std::cout << "+----------------------+           +-------------------+\n";
-            
+        std::cout << "+----------------+" << std::endl;
+        std::cout << "|   宁静空地     |" << std::endl;
+        std::cout << "+----------------+" << std::endl;
+        std::cout << "        |" << std::endl;
+        std::cout << "        |" << std::endl;
+        std::cout << "+----------------+          +----------------+          +------------------+" << std::endl;
+        std::cout << "| 低语森林       | <------> |    神秘洞穴    | <------> |     黑暗沼泽     |" << std::endl;
+        std::cout << "+----------------+          +----------------+          +------------------+" << std::endl;
+        std::cout << "        |                           |                             |" << std::endl;
+        std::cout << "        |                           |                             |" << std::endl;
+        std::cout << "+----------------+          +----------------+          +------------------+" << std::endl;
+        std::cout << "|  初始之地      | <------> |    废弃矿洞    | <------> |     月光湖畔     |" << std::endl;
+        std::cout << "+----------------+          +----------------+          +------------------+" << std::endl;
+        std::cout << "        |                           |" << std::endl;
+        std::cout << "        |                           |" << std::endl;
+        std::cout << "+-----------------+         +----------------+" << std::endl;
+        std::cout << "|  金碧辉煌的饭店 | <-----> |    荒芜高地    |" << std::endl;
+        std::cout << "+-----------------+         +----------------+" << std::endl;
+        std::cout << "		                            |" << std::endl;
+        std::cout << "		                            |" << std::endl;
+        std::cout << "                            +----------------+" << std::endl;
+        std::cout << "                            |  小强大脑      |" << std::endl;
+        std::cout << "                            +----------------+" << std::endl;
     }
 }
 
@@ -166,6 +166,7 @@ void Map::build() {
     r2->exits["east"] = r4;
     r3->exits["south"] = r2;
     hotel->exits["north"] = r1;
+	hotel->exits["east"] = r8;
     r4->exits["west"] = r2;
     r4->exits["south"] = r5;
     r4->exits["east"] = r7;
@@ -174,7 +175,9 @@ void Map::build() {
     r5->exits["east"] = r6;
     r5->exits["south"] = r8;
     r6->exits["west"] = r5;
+	r6->exits["north"] = r7;
     r7->exits["west"] = r4;
+	r7->exits["south"] = r6;
     r8->exits["west"] = hotel;
     r8->exits["north"] = r5;
 	r8->exits["south"] = brainRoom;

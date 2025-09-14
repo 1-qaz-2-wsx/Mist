@@ -444,9 +444,16 @@ void Game::handleRoomInteraction() {
                 std::cout << "虽然挨了打，但你还是吃饱了，体力恢复了。\n";
                 SetConsoleColor(15); // 白色
             }
-            std::cout << "\n(按回车键继续...)\n";
-            std::cin.get(); // 等待玩家按回车
+            
         }
+        else if(choice == 'n' || choice == 'N') {
+			std::cout << "你决定不吃饭，继续你的探索。\n";
+        }
+        else {
+			std::cout << "主理人看你一眼，觉得你有点怪，什么也没发生。\n";
+        }
+        std::cout << "\n(按回车键继续...)\n";
+        std::cin.get(); // 等待玩家按回车
     }
 }
 

@@ -6,7 +6,7 @@ Player::Player(Room* startRoom)
     : currentRoom(startRoom),
     name("玩家"),
 	maxHealth(150), //修改初始最大生命值为150
-    health(100),
+    health(150),
     attack(10),
     defense(5),
     agility(5),

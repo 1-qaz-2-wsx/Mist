@@ -90,7 +90,7 @@ void BattleSystem::playerTurn(Player& player, Enemy& enemy) {
         }
     }
     else {
-        if (command == "attack") {
+        if (command == "attack" || command =="a") {
             // 新的普通攻击伤害计算
             int damage = player.calculateAttack() - enemy.defense;
             if (damage < 0) damage = 0;
@@ -105,7 +105,7 @@ void BattleSystem::playerTurn(Player& player, Enemy& enemy) {
             enemy.takeDamage(damage);
             std::cout << "你对 " << enemy.name << " 造成了 " << damage << " 点伤害。\n";
         }
-        else if (command == "run") {
+        else if (command == "run" || command == "r") {
             std::cout << "你尝试逃离战斗...\n";
             int fleeChance = (player.agility * 10) / (enemy.attack + 1);
             if ((rand() % 100) < fleeChance) {
@@ -119,14 +119,14 @@ void BattleSystem::playerTurn(Player& player, Enemy& enemy) {
                 std::cout << "你的敏捷度降低了！\n";
             }
         }
-        else if (command == "retain" && player.weaponProficiency >= 5) {
+        else if ((command == "retain" || command == "r") && player.weaponProficiency >= 5) {
             std::cout << "你集中精神，开始引导死魂灵的力量...\n";
             player.isUltimateCharged = true;
         }
         else if (command == "use") {
             player.useItem(argument);
         }
-        else if (command == "help") {
+        else if (command == "help" || command == "h") {
             std::cout << "可用指令:\n";
             std::cout << "  attack          普通攻击敌人\n";
             std::cout << "  run             尝试逃跑\n";

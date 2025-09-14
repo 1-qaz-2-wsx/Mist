@@ -191,11 +191,25 @@ void Game::explorationLoop() {
         }
         else {
             processExplorationInput(command);
+
             // 每次行动后，都检查是否触发了房间互动（如进入有怪的房间）  go 指令------------------------------------------------------->修复NPC对话反复弹出问题
-            if (command == "go" ||command == "move" || command == "look")
+			if (command.find("go ") != std::string::npos || command == "look")
             {
+				clearScreen();
+                SetConsoleColor(11); // 亮青色
+                std::cout << "--- 探索模式 ，如要结束探索 menu 可返回主菜单，在主菜单中可保存进度---\n";
+                SetConsoleColor(15); // 白色
+                std::cout << "你现在在: " << player.currentRoom->getName() << "\n";
+                player.currentRoom->look();
+                std::cout << std::endl;
+                //player.showStatus();
+                std::cout << "----------------\n";
+
                 handleRoomInteraction();
-            }
+
+
+             }
+            
         }
 		
    
@@ -438,18 +452,26 @@ void Game::handleRoomInteraction() {
             if (player.money >= cost) {
                 player.money -= cost;
                 player.stamina = player.maxStamina;
-
+				player.health = player.maxHealth;
 				//TODO:提示玩家金钱变化
-
+                std::cout << "你支付了 " << cost << " 剩余金钱：" << player.money << std::endl;
                 SetConsoleColor(10); // 亮绿色
-                std::cout << "你吃得心满意足，体力完全恢复了！\n";
+                std::cout << "你吃得心满意足，体力完全恢复了！并恢复了所有生命值！\n";
                 SetConsoleColor(15); // 白色
             }
             else {
                 SetConsoleColor(4); // 红色
-                std::cout << "你钱不够，主理人把你打了一顿！\n";
+				std::cout << "你只有" << player.money << "，钱不够付饭钱！\n";
+                std::cout << "\n(按回车键继续...)\n";
+                std::cin.get(); // 等待玩家按回车
+
+                std::cout << "主理人把你打了一顿！\n";
                 player.takeDamage(10); // 吃霸王餐被打
                 player.stamina = player.maxStamina;
+
+                std::cout << "\n(按回车键继续...)\n";
+                std::cin.get(); // 等待玩家按回车
+
                 SetConsoleColor(10); // 亮绿色
                 std::cout << "虽然挨了打，但你还是吃饱了，体力恢复了。\n";
                 SetConsoleColor(15); // 白色
@@ -475,6 +497,7 @@ void Game::showCommands() const {
     SetConsoleColor(15); // 白色
 	std::cout << "--------------------\n";
     std::cout << "在这个游戏中，你需要在探索模式中不断精进自己，只有击败最终的迷雾怪物，才能【逃脱】，否则【迷失】\n";
+	std::cout << "你可以使用以下指令来进行探索和互动：\n";
     std::cout << "  go [north/south/east/west/n/s/w/e]: 向指定方向移动。\n";
     std::cout << "  take [物品名]: 拾取地上的物品。\n";
     std::cout << "  look: 查看当前环境。在每到一个新的环境，你【必须】look观察环境来获取信息，包括【你可以走的方向】【你可能获得的物品】【你可能遭遇的事件】\n"; // 将 look 的描述修正
@@ -483,8 +506,25 @@ void Game::showCommands() const {
     std::cout << "  use [物品名]: 使用背包中的一个物品。\n";
     std::cout << "  map: 查看世界地图。\n";
 	std::cout << "  Mist: 挑战迷雾怪物（需要谨慎）。\n";
-    std::cout << "  menu: 返回主菜单。\n";
-    std::cout << "当玩家武器熟练后，触发大招，大招在战斗时需要一个回合的时间积蓄力量，请合理分配资源" << std::endl;
+    std::cout << "  menu: 返回主菜单。\n\n";
+
+    std::cout << "战斗时指令：\n";
+	std::cout << "--------------------\n";
+	std::cout << "  attack/a: 普通攻击敌人。\n";
+    std::cout << "  run/r：尝试逃跑，但有概率失败。\n";
+	std::cout << "  use [物品名]: 使用背包中的一个物品。\n";
+    std::cout << "  retain/re，蓄力准备释放大招，但你需要静止一回合。\n";
+    std::cout << "  bang/b，释放大招对敌人造成巨大伤害\n";
+    std::cout << "  help/h，显示指令帮助信息\n\n";
+
+    std::cout << "  部分相关指令有对应快捷缩写，可减少输入指令的时间。\n";
+    std::cout << "  请仔细阅读并牢记指令，以免战场查看指令时错失攻击回合。\n";
+
+
+	//继续补充游戏机制
+    std::cout << "金碧辉煌的饭店：只要你同意主理人在此用餐，无论钱够不够都会恢复满体力（不给钱只是会有一些代价），但只有你能付够饭钱时，才能恢复满生命值。";
+
+    std::cout << "当玩家武器熟练后，触发大招，大招在战斗时需要一个回合的时间积蓄力量，请合理分配资源\n" << std::endl;
     std::cout << "--------------------\n";
 }
 

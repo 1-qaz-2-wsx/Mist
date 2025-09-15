@@ -89,7 +89,7 @@ void Game::run() {
             clearScreen();
             showCommands();
         }
-        else if (choice == "3") {
+        else if (choice == "5") {
             isRunning = false;
             SetConsoleColor(12); // 亮红色
             std::cout << "感谢游玩《Mist Monster》。\n";
@@ -112,7 +112,7 @@ void Game::run() {
                 std::cout << "加载失败，存档文件不存在或已损坏。\n";
             }
         }
-        else if (choice == "5") {
+        else if (choice == "3") {
             saveGame();
             std::cout << "游戏进度已保存。\n";
         }
@@ -142,10 +142,12 @@ void Game::showLogo() const {
 void Game::showMainMenu() {
     std::cout << "1. 开始新游戏，进入探索发育模式\n";
     std::cout << "2. 查看游戏说明\n";
-    std::cout << "3. 退出游戏\n";
     //std::cout << "4. 挑战迷雾怪物\n";
+    std::cout << "3. 保存进度（以便下次从当前状态开始）\n"; // 添加保存选项
     std::cout << "4. 继续游戏 (加载存档)\n";
-    std::cout << "5. 保存进度（以便下次从当前状态开始）\n"; // 添加保存选项
+
+    std::cout << "5. 退出游戏\n";
+
 }
 
 void Game::explorationLoop() {

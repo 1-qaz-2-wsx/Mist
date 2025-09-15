@@ -412,8 +412,9 @@ void Game::handleRoomInteraction() {
                         std::cout << "柯洁赞许地看着你：“不错，这是你应得的奖励。”\n";
                         player.takeItem(gameMap.getItemFromDatabase("阿尔法狗"));
                         player.health += 10;
+						player.money += 100;
                         if (player.health > player.maxHealth) player.health = player.maxHealth;
-                        std::cout << "你的生命值恢复了10点！\n";
+                        std::cout << "你的生命值恢复了10点！并从【柯洁】手里获取了金钱 100！\n";
                         room->npc->hasGivenItem = true; // 标记奖励已给出
                     }
                     else {

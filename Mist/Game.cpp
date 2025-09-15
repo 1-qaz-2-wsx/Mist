@@ -67,7 +67,12 @@ void Game::run() {
             SetConsoleColor(11); // 亮青色
             std::string message;
             message = "无尽的迷雾吞噬了一切，你孤身一人迷失其中。\n记忆模糊，只剩下两个念头：生存，以及找到迷雾的源头并摧毁它。\n你将探索废墟、森林和古老遗迹，与邪恶的生物战斗，寻找散落的线索和强大的装备。\n每一个转角都可能隐藏着未知的危险，或是一线生机。\n你的每一个选择，都将决定你的命运。\n准备好了吗，探险家？\n迷雾的世界在等待着你。\n";
-            slowPrint(message, 5);
+
+            slowPrint(message, 1);
+
+            message = "在探索模式中，你要尽可能多地获得物品、使用物品以提升自己的实力。你随时可以挑战【迷雾怪物】，来获取【逃脱】，前提是要保障自己实力足够强大。\n";
+            slowPrint(message, 1);
+
             SetConsoleColor(15); // 白色
 
             player.showStatus();

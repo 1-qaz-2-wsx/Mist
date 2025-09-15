@@ -121,7 +121,7 @@ void BattleSystem::playerTurn(Player& player, Enemy& enemy) {
                 std::cout << "你的敏捷度降低了！\n";
             }
         }
-        else if ((command == "retain" || command == "r") && player.weaponProficiency >= 5) {
+        else if ((command == "retain" || command == "re") && player.weaponProficiency >= 5) {
             std::cout << "你集中精神，开始引导死魂灵的力量...\n";
             player.isUltimateCharged = true;
         }

@@ -161,9 +161,8 @@ void Game::explorationLoop() {
     // 第一次进入时，先进行一次房间互动检查（例如，如果起始房间有敌人）
     handleRoomInteraction();
 
-
     while (isExploring && player.isAlive()) {
-        // 清屏
+        // 1.清屏
         clearScreen();
 
         // 2. 显示当前环境和状态
@@ -181,9 +180,6 @@ void Game::explorationLoop() {
         std::cout << "通过输入以下指令进行探索发育，look观察周围环境，触发遭遇！（help 查看指令说明）：\n";   
         std::cout << "'look', 'go [direction]' , 'take [item]' , 'status' , 'inv', 'use [你的物品]' , 'map',  'Mist' , 'menu' , 'help'): \n>";
         SetConsoleColor(15); // 白色
-
-
-
 
         std::string command;
         // 使用 std::cin.ignore() 和 std::getline 来读取带空格的完整指令
@@ -508,7 +504,6 @@ void Game::handleRoomInteraction() {
         std::cin.get(); // 等待玩家按回车
     }
 }
-
 
 
 void Game::showCommands() const {

@@ -16,8 +16,6 @@
 
 #include "SlowPrint.h"
 
-
-
 class Game {
 private:
     Player player;

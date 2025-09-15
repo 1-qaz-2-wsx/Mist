@@ -18,7 +18,7 @@ void Map::buildItemDatabase() {
     itemDatabase["迷雾核心"] = Item("迷雾核心", "一个强大的能量源", ItemType::CONSUMABLE, ItemEffect::ATTACK_BUFF, 20);
     itemDatabase["生命药水"] = Item("生命药水", "恢复70点生命值", ItemType::CONSUMABLE, ItemEffect::HEAL, 70); // 统一为70点恢复（覆盖原50点的重复定义）
     itemDatabase["哥布林的牙齿"] = Item("哥布林的牙齿", "坚硬的牙齿，使用后永久提升5点防御力", ItemType::CONSUMABLE, ItemEffect::DEFENSE_BUFF, 5); // 统一为防御buff（覆盖原“战利品/5点恢复”的重复定义）
-    itemDatabase["食尸鬼的利爪"] = Item("食尸鬼的利爪", "锋利的爪子，使用后永久提升7点攻击力。", ItemType::CONSUMABLE, ItemEffect::ATTACK_BUFF, 10);
+    itemDatabase["食尸鬼的利爪"] = Item("食尸鬼的利爪", "锋利的爪子，使用后永久提升7点攻击力。", ItemType::CONSUMABLE, ItemEffect::ATTACK_BUFF, 7);
     itemDatabase["迅捷符文"] = Item("迅捷符文", "古老的符文，使用后永久提升5点敏捷。", ItemType::CONSUMABLE, ItemEffect::AGILITY_BUFF, 5);
     itemDatabase["智慧卷轴"] = Item("智慧卷轴", "蕴含古老知识的卷轴，使用后永久提升5点智力。", ItemType::CONSUMABLE, ItemEffect::INTELLIGENCE_BUFF, 5);
     itemDatabase["月光珍珠"] = Item("月光珍珠", "闪耀着月色的珍珠，使用后永久提升10点智力。", ItemType::CONSUMABLE, ItemEffect::INTELLIGENCE_BUFF, 10);

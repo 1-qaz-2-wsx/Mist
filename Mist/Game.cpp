@@ -70,7 +70,7 @@ void Game::run() {
 
             slowPrint(message, 1);
 
-            message = "在探索模式中，你要尽可能多地获得物品、使用物品以提升自己的实力。你随时可以挑战【迷雾怪物】，来获取【逃脱】，前提是要保障自己实力足够强大。\n";
+            message = "在探索模式中，你要尽可能多地获得物品、使用物品以提升自己的实力。\n你随时可以挑战【迷雾怪物】，来获取【逃脱】，前提是要保障自己实力足够强大。\n";
             slowPrint(message, 1);
 
             SetConsoleColor(15); // 白色
@@ -454,7 +454,7 @@ void Game::handleRoomInteraction() {
         if (choice == 'y' || choice == 'Y') {
             int cost = rand() % 20 + 10; // 随机价格 10-29
             std::cout << "这顿饭需要 " << cost << " 。\n";
-            std::cout << "\n(按回车键继续...)\n";
+            //std::cout << "\n(按回车键继续...)\n";
             std::cin.get(); // 等待玩家按回车
 
             if (player.money >= cost) {
@@ -488,9 +488,13 @@ void Game::handleRoomInteraction() {
         }
         else if(choice == 'n' || choice == 'N') {
 			std::cout << "你决定不吃饭，继续你的探索。\n";
+            std::cin.get(); // 等待玩家按回车
+
         }
         else {
 			std::cout << "主理人看你一眼，觉得你有点怪，什么也没发生。\n";
+            std::cin.get(); // 等待玩家按回车
+
         }
         std::cout << "\n(按回车键继续...)\n";
         std::cin.get(); // 等待玩家按回车

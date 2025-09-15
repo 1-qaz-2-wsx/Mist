@@ -57,5 +57,5 @@ Item* Room::removeItem(const std::string& itemName) {
 }
 
 std::string Room::getName() {
-	return name;
+    return name;
 }

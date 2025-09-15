@@ -12,6 +12,7 @@
 bool playerFled = false;
 
 BattleResult BattleSystem::startBattle(Player& player, Enemy& enemy) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(400));
     std::cout << "--- 战斗开始! ---\n";
     player.isUltimateCharged = false; // 每次战斗开始时重置蓄力状态
     playerFled = false; // 重置逃跑状态
@@ -39,6 +40,7 @@ BattleResult BattleSystem::startBattle(Player& player, Enemy& enemy) {
 
 
 void BattleSystem::playerTurn(Player& player, Enemy& enemy) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(400));
     std::cout << "\n--- 你的回合 ---\n";
     player.showStatus();
     std::cout << "敌人: " << enemy.name << " | 生命: " << enemy.health << "\n";
@@ -71,7 +73,7 @@ void BattleSystem::playerTurn(Player& player, Enemy& enemy) {
 
     if (player.isUltimateCharged) {
         if (command == "bang") {
-            slowPrint("死魂灵的力量从武器中喷涌而出！\n", 50);
+            slowPrint("死魂灵的力量从武器中喷涌而出！\n", 20);
             // 大招伤害计算
             int baseDamage = player.calculateAttack() - enemy.defense;
             int ultimateDamage = static_cast<int>(baseDamage * 2.0 + player.intelligence * 1.5);
@@ -148,7 +150,7 @@ void BattleSystem::playerTurn(Player& player, Enemy& enemy) {
 
 void BattleSystem::enemyTurn(Player& player, Enemy& enemy) {
     std::cout << "\n--- 敌人回合 ---\n";
-
+    std::this_thread::sleep_for(std::chrono::milliseconds(400));
     // 敌人攻击命中判定
     int hitChance = 100 - (player.agility * 2); // 玩家敏捷越高，敌人越容易miss
     if ((rand() % 100) < hitChance) {

@@ -139,7 +139,7 @@ void Game::showLogo() const {
     std::cout << "########################################\n\n";
     SetConsoleColor(11); // 亮青色
     std::cout << "欢迎来到《Mist Monster》！\n";
-    std::cout << "在这个充满迷雾的世界中，你需要探索发育，击败迷雾怪物并生存下去。\n";
+    std::cout << "在这个充满迷雾的世界中，你需要探索发育，击败迷雾怪物并生存下去。\n\n";
     SetConsoleColor(15); // 白色
 }
 
@@ -149,8 +149,7 @@ void Game::showMainMenu() {
     //std::cout << "4. 挑战迷雾怪物\n";
     std::cout << "3. 保存进度（以便下次从当前状态开始）\n"; // 添加保存选项
     std::cout << "4. 继续游戏 (加载存档)\n";
-
-    std::cout << "5. 退出游戏\n";
+    std::cout << "5. 退出游戏\n\n";
 
 }
 
@@ -435,13 +434,18 @@ void Game::handleRoomInteraction() {
         // *** 其他普通NPC的逻辑 ***
 
         else{
-            SetConsoleColor(9); // 亮蓝色
+            SetConsoleColor(15); // 白色
             room->npc->talk();
             if (!room->npc->hasGivenItem) {
                 Item receivedItem = room->npc->giveItem();
-                std::cout << "你从 " << room->npc->name << " 那里获得了: " << receivedItem.name << "!\n";
+                std::cout << "你从 "<< room->npc->name<< " 那里获得了: ";
+                SetConsoleColor(9); // 亮蓝色
+                std::cout<< receivedItem.name << "!\n";
                 player.takeItem(receivedItem);
             }
+			else {
+				std::cout << room->npc->name << " 说：我已经没有什么可以给你了。\n";
+			}
             SetConsoleColor(15); // 白色
         }
         std::cout << "\n(按回车键继续...)\n";
@@ -508,41 +512,130 @@ void Game::handleRoomInteraction() {
 
 
 void Game::showCommands() const {
-    SetConsoleColor(11); // 亮青色
-    std::cout << "\n探索模式指令:\n";
-    SetConsoleColor(15); // 白色
-	std::cout << "--------------------\n";
-    std::cout << "在这个游戏中，你需要在探索模式中不断精进自己，只有击败最终的迷雾怪物，才能【逃脱】，否则【迷失】\n";
-	std::cout << "你可以使用以下指令来进行探索和互动：\n";
-    std::cout << "  go [north/south/east/west/n/s/w/e]: 向指定方向移动。\n";
-    std::cout << "  take [物品名]: 拾取地上的物品。\n";
-    std::cout << "  look: 查看当前环境。在每到一个新的环境，你【必须】look观察环境来获取信息，包括【你可以走的方向】【你可能获得的物品】【你可能遭遇的事件】\n"; // 将 look 的描述修正
-    std::cout << "  status: 查看你的当前状态。\n";
-    std::cout << "  inventory (或 inv): 查看你的背包。\n";
-    std::cout << "  use [物品名]: 使用背包中的一个物品。\n";
-    std::cout << "  map: 查看世界地图。\n";
-	std::cout << "  Mist: 挑战迷雾怪物（需要谨慎）。\n";
-    std::cout << "  menu: 返回主菜单。\n\n";
-
-    std::cout << "战斗时指令：\n";
-	std::cout << "--------------------\n";
-	std::cout << "  attack/a: 普通攻击敌人。\n";
-    std::cout << "  run/r：尝试逃跑，但有概率失败。\n";
-	std::cout << "  use [物品名]: 使用背包中的一个物品。\n";
-    std::cout << "  retain/re，蓄力准备释放大招，但你需要静止一回合。\n";
-    std::cout << "  bang/b，释放大招对敌人造成巨大伤害\n";
-    std::cout << "  help/h，显示指令帮助信息\n\n";
-
-    std::cout << "  部分相关指令有对应快捷缩写，可减少输入指令的时间。\n";
-    std::cout << "  请仔细阅读并牢记指令，以免战场查看指令时错失攻击回合。\n";
-
-
-	//继续补充游戏机制
-    std::cout << "金碧辉煌的饭店：只要你同意主理人在此用餐，无论钱够不够都会恢复满体力（不给钱只是会有一些代价），但只有你能付够饭钱时，才能恢复满生命值。";
-
-    std::cout << "当玩家武器熟练后，触发大招，大招在战斗时需要一个回合的时间积蓄力量，请合理分配资源\n" << std::endl;
+    // 亮黄标题
+    SetConsoleColor(14);
+    std::cout << "\n=== 探索模式指令 ===\n";
+    SetConsoleColor(15);
     std::cout << "--------------------\n";
+
+    // 说明文字
+    SetConsoleColor(7);
+    std::cout << "在这个游戏中，你需要在探索模式中不断精进自己，"
+        "只有击败最终的迷雾怪物，才能";
+    SetConsoleColor(12); // 亮红
+    std::cout << "【逃脱】";
+    SetConsoleColor(7);
+    std::cout << "，否则";
+    SetConsoleColor(12);
+    std::cout << "【迷失】\n";
+    SetConsoleColor(7);
+    std::cout << "你可以使用以下指令来进行探索和互动：\n";
+
+    // 指令列表
+    SetConsoleColor(11); // 指令名亮青
+    std::cout << "  go [north/south/east/west/n/s/w/e]";
+    SetConsoleColor(7);
+    std::cout << ": 向指定方向移动。\n";
+
+    SetConsoleColor(11);
+    std::cout << "  take [物品名]";
+    SetConsoleColor(7);
+    std::cout << ": 拾取地上的物品。\n";
+
+    SetConsoleColor(11);
+    std::cout << "  look";
+    SetConsoleColor(7);
+    std::cout << ": 查看当前环境。在每到一个新的环境，你可以look观察环境来获取信息，\n";
+    std::cout<<"  包括【你可以走的方向】【你可能获得的物品】【你可能遭遇的事件】(也可以用来反复触发与npc对话)\n";
+
+    SetConsoleColor(11);
+    std::cout << "  status";
+    SetConsoleColor(7);
+    std::cout << ": 查看你的当前状态。\n";
+
+    SetConsoleColor(11);
+    std::cout << "  inventory (或 inv)";
+    SetConsoleColor(7);
+    std::cout << ": 查看你的背包。\n";
+
+    SetConsoleColor(11);
+    std::cout << "  use [物品名]";
+    SetConsoleColor(7);
+    std::cout << ": 使用背包中的一个物品。\n";
+
+    SetConsoleColor(11);
+    std::cout << "  map";
+    SetConsoleColor(7);
+    std::cout << ": 查看世界地图。\n";
+
+    SetConsoleColor(11);
+    std::cout << "  Mist";
+    SetConsoleColor(7);
+    std::cout << ": 挑战迷雾怪物（需要谨慎）。\n";
+
+    SetConsoleColor(11);
+    std::cout << "  menu";
+    SetConsoleColor(7);
+    std::cout << ": 返回主菜单。\n\n";
+
+    // 战斗指令
+    SetConsoleColor(14);
+    std::cout << "=== 战斗时指令 ===\n";
+    SetConsoleColor(15);
+    std::cout << "--------------------\n";
+
+    SetConsoleColor(11);
+    std::cout << "  attack/a";
+    SetConsoleColor(7);
+    std::cout << ": 普通攻击敌人。\n";
+
+    SetConsoleColor(11);
+    std::cout << "  run/r";
+    SetConsoleColor(7);
+    std::cout << ": 尝试逃跑，但有概率失败。\n";
+
+    SetConsoleColor(11);
+    std::cout << "  use [物品名]";
+    SetConsoleColor(7);
+    std::cout << ": 使用背包中的一个物品。\n";
+
+    SetConsoleColor(11);
+    std::cout << "  retain/re";
+    SetConsoleColor(7);
+    std::cout << ": 蓄力准备释放大招，但你需要静止一回合。\n";
+
+    SetConsoleColor(11);
+    std::cout << "  bang/b";
+    SetConsoleColor(7);
+    std::cout << ": 释放大招对敌人造成巨大伤害。\n";
+
+    SetConsoleColor(11);
+    std::cout << "  help/h";
+    SetConsoleColor(7);
+    std::cout << ": 显示指令帮助信息。\n\n";
+
+    // 提示
+    SetConsoleColor(12);
+    std::cout << "  部分相关指令有对应快捷缩写，可减少输入指令的时间。\n";
+    std::cout << "  请仔细阅读并牢记指令，以免战场查看指令时错失攻击回合。\n\n";
+
+    // 额外机制
+    SetConsoleColor(14);
+    std::cout << "=== 额外机制 ===\n";
+    SetConsoleColor(15);
+    std::cout << "--------------------\n";
+
+    SetConsoleColor(7);
+    std::cout << "金碧辉煌的饭店：只要你同意主理人在此用餐，"
+        "只要你同意在此用餐，无论金钱是否足够，都能恢复【满体力】（不给钱会付出代价）。\n若支付足额费用，还可恢复【满生命值】。\n";
+
+    std::cout << "当熟练度提升后可解锁【大招】，释放大招需先蓄力一回合，\n请合理规划战斗策略。\n";
+    std::cout << "--------------------\n";
+
+    // 恢复默认
+    SetConsoleColor(15);
 }
+
 
 void Game::challengeMonster() {
     SetConsoleColor(12); // 亮红色

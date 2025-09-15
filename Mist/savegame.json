@@ -1,24 +1,26 @@
 {
     "player": {
         "agility": 5,
-        "attack": 10,
-        "currentRoomName": "低语森林",
-        "defense": 10,
-        "health": 135,
+        "attack": 17,
+        "currentRoomName": "黑暗沼泽",
+        "defense": 5,
+        "equippedWeapon": "猎枪",
+        "health": 132,
         "intelligence": 5,
         "inventory": [
-            "法杖"
+            "猎枪",
+            "沼泽毒牙"
         ],
         "maxHealth": 150,
         "maxStamina": 8,
         "money": 100,
         "name": "玩家",
-        "stamina": 7,
-        "weaponProficiency": 0
+        "stamina": 5,
+        "weaponProficiency": 5
     },
     "worldState": {
         "低语森林": {
-            "hasEnemy": false,
+            "hasEnemy": true,
             "items": [
                 "迅捷符文"
             ]
@@ -26,7 +28,7 @@
         "初始之地": {
             "hasEnemy": false,
             "items": [
-                "猎枪",
+                "法杖",
                 "重剑"
             ]
         },
@@ -39,7 +41,7 @@
             "items": []
         },
         "废弃矿洞": {
-            "hasEnemy": true,
+            "hasEnemy": false,
             "items": []
         },
         "月光湖畔": {
@@ -61,7 +63,7 @@
             "items": []
         },
         "黑暗沼泽": {
-            "hasEnemy": true,
+            "hasEnemy": false,
             "items": []
         }
     }

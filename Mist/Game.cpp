@@ -601,10 +601,8 @@ void Game::saveGame() const {
     // 2. 保存世界状态（哪些敌人被击败，哪些物品被拾取）
     json worldState;
     for (const auto& room : gameMap.allRooms) {
-        // 记录没有敌人的房间（假设它们原来有）
-        if (room->enemy == nullptr) {
-            worldState[room->name]["hasEnemy"] = false;
-        }
+        // 记录没有敌人的房间
+        worldState[room->name]["hasEnemy"] = (room->enemy != nullptr);
         // 记录房间里还剩下哪些物品
         std::vector<std::string> remainingItems;
         for (const auto& itemPtr : room->items) {
@@ -678,7 +676,7 @@ bool Game::loadGame() {
     for (auto& room : gameMap.allRooms) {
         if (worldState.contains(room->name)) {
             // 如果存档记录这个房间没有敌人，就删除它
-            if (worldState[room->name]["hasEnemy"] == false && room->enemy != nullptr) {
+            if (worldState[room->name].contains("hasEnemy") && worldState[room->name]["hasEnemy"] == false && room->enemy != nullptr) {
                 delete room->enemy;
                 room->enemy = nullptr;
             }

@@ -31,6 +31,7 @@ private:
     void showCommands() const;
     void challengeMonster();
     void handleRoomInteraction();
+    void newGame(); //新增  存档后玩家选择开始新游戏
     void resetGame();
 	//辅助函数，探索模式输入处理
     void processExplorationInput(const std::string& input);

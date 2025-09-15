@@ -62,6 +62,10 @@ void Game::run() {
 
         if (choice == "1") {
             // 当选择1时，进入并开始探索循环
+
+            newGame(); // 调用新函数来重置游戏状态
+
+
             clearScreen();
 
             SetConsoleColor(11); // 亮青色
@@ -704,4 +708,11 @@ bool Game::loadGame() {
     return true;
 
 
+}
+
+void Game::newGame() {
+    // 重置地图，恢复所有敌人、NPC和物品
+    gameMap.build();
+    // 创建一个全新的玩家对象，并将其设置在起始房间
+    player = Player(gameMap.startRoom);
 }

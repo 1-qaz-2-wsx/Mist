@@ -3,13 +3,11 @@
         "agility": 5,
         "attack": 10,
         "currentRoomName": "低语森林",
-        "defense": 5,
-        "equippedWeapon": "猎枪",
-        "health": 145,
+        "defense": 10,
+        "health": 135,
         "intelligence": 5,
         "inventory": [
-            "猎枪",
-            "哥布林的牙齿"
+            "法杖"
         ],
         "maxHealth": 150,
         "maxStamina": 8,
@@ -28,7 +26,7 @@
         "初始之地": {
             "hasEnemy": false,
             "items": [
-                "法杖",
+                "猎枪",
                 "重剑"
             ]
         },

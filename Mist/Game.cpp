@@ -457,7 +457,7 @@ void Game::handleRoomInteraction() {
         std::cin >> choice;
         if (choice == 'y' || choice == 'Y') {
             int cost = rand() % 20 + 10; // 随机价格 10-29
-            std::cout << "这顿饭需要 " << cost << " 。\n";
+            std::cout << "这顿饭需要 " << cost << "G 。\n";
             //std::cout << "\n(按回车键继续...)\n";
             std::cin.get(); // 等待玩家按回车
 
@@ -466,14 +466,14 @@ void Game::handleRoomInteraction() {
                 player.stamina = player.maxStamina;
 				player.health = player.maxHealth;
 				//TODO:提示玩家金钱变化
-                std::cout << "你支付了 " << cost << " 剩余金钱：" << player.money << std::endl;
+                std::cout << "你支付了 " << cost << "G, 剩余金钱：" << player.money << std::endl;
                 SetConsoleColor(10); // 亮绿色
                 std::cout << "你吃得心满意足，体力完全恢复了！并恢复了所有生命值！\n";
                 SetConsoleColor(15); // 白色
             }
             else {
                 SetConsoleColor(4); // 红色
-				std::cout << "你只有" << player.money << "，钱不够付饭钱！\n";
+				std::cout << "你只有" << player.money << "G，钱不够付饭钱！\n";
                 std::cout << "\n(按回车键继续...)\n";
                 std::cin.get(); // 等待玩家按回车
 

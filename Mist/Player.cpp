@@ -2,7 +2,7 @@
 #include <iostream>
 #include <algorithm> // 需要包含 akgorithm 来使用 std::find_if
 #include "Map.h"
-Player::Player(Room* startRoom)
+Player::Player(std::shared_ptr<Room> startRoom)
     : currentRoom(startRoom),
     name("玩家"),
 	maxHealth(150), //修改初始最大生命值为150
@@ -41,11 +41,19 @@ bool Player::move(const std::string& direction, Map& gameMap) {
 
     auto it = currentRoom->exits.find(direction);
     if (it != currentRoom->exits.end()) {
-        currentRoom = it->second;
-        stamina--; // 移动消耗体力
-        std::cout << "你移动到了 " << currentRoom->getName() << "，消耗了1点体力。\n";
-        return true; // 移动成功
+        //currentRoom = it->second;
+        //stamina--; // 移动消耗体力
+        //std::cout << "你移动到了 " << currentRoom->getName() << "，消耗了1点体力。\n";
+        //return true; // 移动成功
+        // 使用 lock() 从 weak_ptr 获取 shared_ptr
+        if (auto nextRoom = it->second.lock()) {
+            currentRoom = nextRoom;
+            stamina--;
+            std::cout << "你移动到了 " << currentRoom->getName() << "，消耗了1点体力。\n";
+            return true;
+        }
     }
+
     else {
         std::cout << "那个方向没有路。\n";
         return false; // 移动失败

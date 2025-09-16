@@ -2,18 +2,21 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <memory>
 
 // 前向声明以避免循环引用
 class Item;
 class Enemy;
 class NPC;
+class Room;
 
 class Room {
 public:
 	//unsigned int id_; // 房间唯一标识符
 	std::string name;
     std::string description;
-    std::map<std::string, Room*> exits;
+    //std::map<std::string, Room*> exits;
+    std::map<std::string, std::weak_ptr<Room>> exits;
     std::vector<Item*> items; // 存储多个物品
 
     Enemy* enemy;

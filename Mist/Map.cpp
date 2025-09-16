@@ -34,12 +34,12 @@ void Map::buildItemDatabase() {
     itemDatabase["龙骨大剑"] = Item("龙骨大剑", "由幼龙骨制成的巨剑", ItemType::WEAPON, ItemEffect::ATTACK_BUFF, 0, 25);
 }
 
-Map::~Map() {
-    for (Room* room : allRooms) {
-        delete room;
-    }
-    allRooms.clear();
-}
+//Map::~Map() {
+//    for (Room* room : allRooms) {
+//        delete room;
+//    }
+//    allRooms.clear();
+//}
 
 Item Map::getItemFromDatabase(const std::string& itemName) const {
     auto it = itemDatabase.find(itemName);
@@ -97,9 +97,9 @@ void Map::loadMapFromFile(const std::string& filePath) {
 void Map::build() {
 
     // 清理旧的世界数据，以便重新加载
-    for (Room* room : allRooms) {
-        delete room;
-    }
+    //for (Room* room : allRooms) {
+    //    delete room;
+    //}
     allRooms.clear();
 
     // 1. 从数据库获取物品原型来创建实例
@@ -121,18 +121,18 @@ void Map::build() {
 
 
     // 2. 创建房间
-    Room* r1 = new Room("初始之地", "你身处一个昏暗的【初始之地】，四周弥漫着薄雾。你隐约看到地面上放着一些物品，其中可能有武器可以拾取。");
-    Room* r2 = new Room("低语森林", "这里是【低语森林】，偶尔能听到怪物的嘶吼。");
-    Room* r3 = new Room("宁静空地", "你来到一片【宁静空地】，中央有一个和蔼的【老人】。");
-    Room* hotel = new Room("金碧辉煌的饭店", "你走进一家【金碧辉煌的饭店】，里面的食物香气扑鼻。");
+    auto r1 = std::make_shared<Room>("初始之地", "你身处一个昏暗的【初始之地】，四周弥漫着薄雾。你隐约看到地面上放着一些物品，其中可能有武器可以拾取。");
+    auto r2 = std::make_shared<Room>("低语森林", "这里是【低语森林】，偶尔能听到怪物的嘶吼。");
+    auto r3 = std::make_shared<Room>("宁静空地", "你来到一片【宁静空地】，中央有一个和蔼的【老人】。");
+    auto hotel = std::make_shared<Room>("金碧辉煌的饭店", "你走进一家【金碧辉煌的饭店】，里面的食物香气扑鼻。");
     this->hotelRoom = hotel; // 将创建的饭店赋值给成员指针
-    Room* r4 = new Room("神秘洞穴", "你进入了一个阴暗的【神秘洞穴】，四周回荡着水滴声。");
-    Room* r5 = new Room("废弃矿洞", "你来到一个【废弃矿洞】，空气中弥漫着潮湿和铁锈的味道，脚下是摇摇欲坠的木板。");
-    Room* r6 = new Room("月光湖畔", "银色月光洒在【月光湖畔】，湖水波光粼粼。");
-    Room* r7 = new Room("黑暗沼泽", "【黑暗沼泽】散发着腐败的气息，空气中带着剧毒。");
-    Room* r8 = new Room("荒芜高地", "你登上【荒芜高地】，寒风呼啸，视野极为开阔。");
+    auto r4 = std::make_shared<Room>("神秘洞穴", "你进入了一个阴暗的【神秘洞穴】，四周回荡着水滴声。");
+    auto r5 = std::make_shared<Room>("废弃矿洞", "你来到一个【废弃矿洞】，空气中弥漫着潮湿和铁锈的味道，脚下是摇摇欲坠的木板。");
+    auto r6 = std::make_shared<Room>("月光湖畔", "银色月光洒在【月光湖畔】，湖水波光粼粼。");
+    auto r7 = std::make_shared<Room>("黑暗沼泽", "【黑暗沼泽】散发着腐败的气息，空气中带着剧毒。");
+    auto r8 = std::make_shared<Room>("荒芜高地", "你登上【荒芜高地】，寒风呼啸，视野极为开阔。");
     // *** 新增房间 ***
-    Room* brainRoom = new Room("小强大脑", "这是一个充满未来感的房间，中央坐着一个年轻人，眼神锐利。他就是【柯洁】。");
+    auto brainRoom = std::make_shared<Room>("小强大脑", "这是一个充满未来感的房间，中央坐着一个年轻人，眼神锐利。他就是【柯洁】。");
 
 
     // 3. 创建生物 (Loot现在直接从数据库获取)
@@ -192,7 +192,7 @@ void Map::build() {
     // 6. 设置起点
     startRoom = r1;
 
-    // 7. 将所有房间加入管理器以便释放内存
+     //7. 将所有房间加入管理器以便释放内存
     allRooms.push_back(r1);
     allRooms.push_back(r2);
     allRooms.push_back(r3);

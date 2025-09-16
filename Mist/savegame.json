@@ -1,22 +1,22 @@
 {
     "player": {
         "agility": 5,
-        "attack": 17,
-        "currentRoomName": "黑暗沼泽",
+        "attack": 10,
+        "currentRoomName": "废弃矿洞",
         "defense": 5,
         "equippedWeapon": "猎枪",
-        "health": 132,
+        "health": 126,
         "intelligence": 5,
         "inventory": [
             "猎枪",
-            "沼泽毒牙"
+            "食尸鬼的利爪"
         ],
         "maxHealth": 150,
         "maxStamina": 8,
         "money": 100,
         "name": "玩家",
-        "stamina": 5,
-        "weaponProficiency": 5
+        "stamina": 7,
+        "weaponProficiency": 0
     },
     "worldState": {
         "低语森林": {
@@ -63,7 +63,7 @@
             "items": []
         },
         "黑暗沼泽": {
-            "hasEnemy": false,
+            "hasEnemy": true,
             "items": []
         }
     }

@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <map> // 用于存储武器
+#include <memory>
 #include "Item.h"
 #include "Room.h"
 
@@ -25,10 +26,12 @@ public:
 
     bool isUltimateCharged; // 是否已蓄力准备放大招
 
-    Room* currentRoom;
+    //Room* currentRoom;
+    std::shared_ptr<Room> currentRoom;
     std::vector<Item> inventory;
 
-    Player(Room* startRoom);
+    //Player(Room* startRoom);
+    Player(std::shared_ptr<Room> startRoom);
 
     bool move(const std::string& direction, Map& gameMap);
     void takeItem(const Item& item);

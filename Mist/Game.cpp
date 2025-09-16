@@ -346,7 +346,8 @@ void Game::processExplorationInput(const std::string& input) {
 
 
 void Game::handleRoomInteraction() {
-    Room* room = player.currentRoom;
+    //Room* room = player.currentRoom;
+	auto room = player.currentRoom; // 使用 auto 让编译器推断类型
 
     // 遇敌
     if (room->enemy != nullptr) {
@@ -457,7 +458,7 @@ void Game::handleRoomInteraction() {
         std::cin >> choice;
         if (choice == 'y' || choice == 'Y') {
             int cost = rand() % 20 + 10; // 随机价格 10-29
-            std::cout << "这顿饭需要 " << cost << "G 。\n";
+            std::cout << "这顿饭需要 " << cost << " G 。\n";
             //std::cout << "\n(按回车键继续...)\n";
             std::cin.get(); // 等待玩家按回车
 
@@ -466,7 +467,7 @@ void Game::handleRoomInteraction() {
                 player.stamina = player.maxStamina;
 				player.health = player.maxHealth;
 				//TODO:提示玩家金钱变化
-                std::cout << "你支付了 " << cost << "G, 剩余金钱：" << player.money << std::endl;
+                std::cout << "你支付了 " << cost << " G, 剩余金钱：" << player.money <<" G"<< std::endl;
                 SetConsoleColor(10); // 亮绿色
                 std::cout << "你吃得心满意足，体力完全恢复了！并恢复了所有生命值！\n";
                 SetConsoleColor(15); // 白色
@@ -743,7 +744,7 @@ bool Game::loadGame() {
     // 3. 恢复玩家位置
     std::string roomName = saveData["player"]["currentRoomName"];
     bool roomFound = false;
-    for (auto* room : gameMap.allRooms) {
+    for (auto& room : gameMap.allRooms) {
         if (room->name == roomName) {
             player.currentRoom = room;
             roomFound = true;
